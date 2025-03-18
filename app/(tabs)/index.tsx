@@ -1,65 +1,39 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React from 'react';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { router } from 'expo-router';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const index = () => {
+    return (
+        <View style={ styles.container }>
+            <View >
+                <Text>Hey!</Text>
+                <View style={ { display: 'flex', justifyContent: 'space-between', flexDirection: 'row' } }>
+                    <Text style={ { fontWeight: 'bold' } } >Constantine </Text>
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView className="flex-1 flex-row gap-x-1">
-        <ThemedText type="title" className="text-red-700">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-    );
+                    <MaterialCommunityIcons name="bell-ring-outline" size={ 24 } color="black" />
+                </View>
+            </View>
+            <View style={ { flex: 2 } }>
+                <Text>Help is just a click away!</Text>
+                <Text>Click SOS button to call the help.</Text>
+
+                <TouchableOpacity onPress={ () => router.navigate('./SOS') }
+                    style={ { backgroundColor: '#E02323' } }>
+
+                    <Text style={ { color: '#FFFFFF' } }>SOS</Text>
+                </TouchableOpacity>
+                <Text>Volunteer for help</Text>
+            </View>
+        </View>
+    )
 }
 
+export default index
+
 const styles = StyleSheet.create({
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+    container: {
+        display: 'flex',
+        padding: 20
+    }
+})
