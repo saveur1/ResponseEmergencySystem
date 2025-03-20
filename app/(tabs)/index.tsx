@@ -23,7 +23,7 @@ const index = () => {
                     <Text>Click <Text style={ { color: '#E02323', fontWeight: 'bold' } }>SOS button</Text> to call the help.</Text>
                 </View>
 
-                <TouchableOpacity onPress={ () => router.navigate('./SOS') }
+                <TouchableOpacity onPress={ () => router.navigate('/ReportEmergency') }
                     style={ styles.sosButton }>
 
                     <Text style={ styles.SosText }>SOS</Text>

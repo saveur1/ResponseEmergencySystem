@@ -9,8 +9,11 @@ const _layout = () => {
         name='(tabs)'
         options={ { headerShown: false, } }
       />
+      <Stack.Screen
+        name='ReportEmergency'
+        options={ { title: 'Report Emergency' } }
+      />
     </Stack>
-    // <slot/>
   )
 }
 
