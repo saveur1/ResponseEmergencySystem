@@ -1,3 +1,6 @@
+
+.qodo
+
 # Logs
 logs
 *.log
@@ -69,3 +72,4 @@ node_modules/
 .dataconnect
 bun.lockb
 *.env
+
