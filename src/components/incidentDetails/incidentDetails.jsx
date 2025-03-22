@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "./incidentDetails.css";
+
 
 function IncidentDetails() {
   const { id } = useParams();
