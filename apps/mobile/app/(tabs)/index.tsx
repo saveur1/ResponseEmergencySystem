@@ -3,21 +3,21 @@ import React, { useState } from 'react';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
 
-const index = () => {
+const Index = () => {
     const [isVolunter, setIsVolunter] = useState(true);
     const toggleIsVolunter = () => setIsVolunter(value => !value);
 
     return (
-        <View style={ styles.container }>
+        <View className="flex-1 p-5 justify-between text-[#424B5A]">
             <View >
-                <Text>Hey!</Text>
+                <Text className="text-red-600">Hey!</Text>
                 <View style={ { display: 'flex', justifyContent: 'space-between', flexDirection: 'row' } }>
                     <Text style={ { fontWeight: 'bold', fontSize: 18 } } >Constantine </Text>
 
                     <MaterialCommunityIcons name="bell-ring-outline" size={ 24 } color="black" />
                 </View>
             </View>
-            <View style={ { height: '80vh', padding: 20, justifyContent: 'space-between', } }>
+            <View style={ { padding: 20, justifyContent: 'space-between' } }>
                 <View>
                     <Text>Help is just a click away!</Text>
                     <Text>Click <Text style={ { color: '#E02323', fontWeight: 'bold' } }>SOS button</Text> to call the help.</Text>
@@ -45,7 +45,7 @@ const index = () => {
     )
 }
 
-export default index
+export default Index
 
 const styles = StyleSheet.create({
     container: {
