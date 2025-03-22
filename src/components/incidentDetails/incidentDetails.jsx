@@ -27,12 +27,12 @@ function IncidentDetails() {
 
   const handleStatusChange = (newStatus) => {
     setIncident({ ...incident, status: newStatus });
-    // In a real app, you would send this update to your backend
+    // need to send this update to our backend
   };
 
   const handleAddUpdate = () => {
     if (statusUpdate.trim()) {
-      // In a real app, you would send this update to your backend
+      // need to send this update to our backend
       alert(`Update added: ${statusUpdate}`);
       setStatusUpdate("");
     }

@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
 
 function Login() {
@@ -10,10 +10,19 @@ function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // need to verify credentials with the backend
+
+   
     if (username && password) {
-      //just redirected to dashboard
-      navigate("/dashboard");
+     
+      const storedUser = localStorage.getItem("currentUser");
+
+      if (storedUser) {
+       
+        navigate("/dashboard");
+      } else {
+        
+        alert("No account found. Please sign up first.");
+      }
     }
   };
 
@@ -24,9 +33,9 @@ function Login() {
         <h4>Responder Login</h4>
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label>Username</label>
+            <label>Email</label>
             <input
-              type="text"
+              type="email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -45,6 +54,10 @@ function Login() {
             Login
           </button>
         </form>
+
+        <div className="signup-link">
+          Don't have an account? <Link to="/signup">Sign Up</Link>
+        </div>
       </div>
     </div>
   );
