@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import React from 'react'
 
 const Community = () => {
@@ -10,5 +10,3 @@ const Community = () => {
 }
 
 export default Community
-
-const styles = StyleSheet.create({})

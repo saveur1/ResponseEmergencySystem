@@ -10,25 +10,26 @@ const Index = () => {
     return (
         <View className="flex-1 p-5 justify-between text-[#424B5A]">
             <View >
-                <Text className="text-red-600">Hey!</Text>
-                <View style={ { display: 'flex', justifyContent: 'space-between', flexDirection: 'row' } }>
-                    <Text style={ { fontWeight: 'bold', fontSize: 18 } } >Constantine </Text>
-
+                <Text>Hey!</Text>
+                <View className="flex justify-between flex-row mt-1">
+                    <Text className="font-bold text-xl" >Constantine </Text>
                     <MaterialCommunityIcons name="bell-ring-outline" size={ 24 } color="black" />
                 </View>
             </View>
-            <View style={ { padding: 20, justifyContent: 'space-between' } }>
-                <View>
+            <View>
+                <View className="mb-10">
                     <Text>Help is just a click away!</Text>
                     <Text>Click <Text style={ { color: '#E02323', fontWeight: 'bold' } }>SOS button</Text> to call the help.</Text>
                 </View>
 
-                <TouchableOpacity onPress={ () => router.navigate('/ReportEmergency') }
+                <TouchableOpacity 
+                    onPress={ () => router.navigate('/ReportEmergency') }
                     style={ styles.sosButton }>
 
-                    <Text style={ styles.SosText }>SOS</Text>
+                    <Text className="text-white font-bold text-4xl">SOS</Text>
                 </TouchableOpacity>
-                <View style={ styles.volunter }>
+                
+                <View className="bg-white rounded-md flex flex-row items-center justify-between px-4">
                     <Text style={ { fontWeight: '500', color: '#212121', } }>
                         Volunteer for help
                     </Text>
@@ -48,13 +49,6 @@ const Index = () => {
 export default Index
 
 const styles = StyleSheet.create({
-    container: {
-        display: 'flex',
-        padding: 20,
-        justifyContent: 'space-between',
-        height: '100%',
-        color: '#424B5A',
-    },
     sosButton: {
         alignSelf: 'center',
         marginBottom: 70,
@@ -65,18 +59,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         boxShadow: ' 0 0 1px 10px #F2A6A6, 0 0 2px 20px #F9D2D2 , 0 0 1px 30px #FAE8E9',
-    },
-    SosText: {
-        color: '#FFFFFF',
-        fontWeight: 'bold',
-        fontSize: 40,
-    },
-    volunter: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 15,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
     }
 })
