@@ -1,0 +1,27 @@
+{
+  "name": "responseemergencysystem",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "firebase": "firebase serve --only hosting",
+    "mobile": "cd apps/mobile && npm start",
+    "web": "cd apps/web && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saveur1/ResponseEmergencySystem.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/saveur1/ResponseEmergencySystem/issues"
+  },
+  "homepage": "https://github.com/saveur1/ResponseEmergencySystem#readme",
+  "dependencies": {
+    "firebase": "^11.5.0"
+  }
+}
