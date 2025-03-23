@@ -1,4 +1,4 @@
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
@@ -8,18 +8,18 @@ const Index = () => {
     const toggleIsVolunter = () => setIsVolunter(value => !value);
 
     return (
-        <View className="flex-1 p-5 justify-between text-[#424B5A]">
+        <ScrollView className="flex-1 p-5 text-[#424B5A] relative">
             <View >
                 <Text>Hey!</Text>
                 <View className="flex justify-between flex-row mt-1">
-                    <Text className="font-bold text-xl" >Constantine </Text>
+                    <Text className="font-bold text-xl" >Is everything Alright? </Text>
                     <TouchableOpacity>
                         <MaterialCommunityIcons name="bell-ring-outline" size={ 24 } color="black" />
                     </TouchableOpacity>
                 </View>
             </View>
-            <View>
-                <View className="mb-10">
+            <View className="mt-8">
+                <View className="pb-14">
                     <Text>Help is just a click away!</Text>
                     <Text>Click <Text style={ { color: '#E02323', fontWeight: 'bold' } }>SOS button</Text> to call the help.</Text>
                 </View>
@@ -31,7 +31,7 @@ const Index = () => {
                     <Text className="text-white font-bold text-4xl">SOS</Text>
                 </TouchableOpacity>
 
-                <View className="bg-white rounded-md flex flex-row items-center justify-between px-4">
+                <View className="bg-white w-full rounded-md flex flex-row items-center justify-between px-4 mb-10">
                     <Text style={ { fontWeight: '500', color: '#212121', } }>
                         Volunteer for help
                     </Text>
@@ -44,7 +44,7 @@ const Index = () => {
 
                 </View>
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginBottom: 70,
         backgroundColor: '#E02323',
-        height: '50%',
-        width: '80%',
+        height: 250,
+        width: 250,
         borderRadius: '50%',
         alignItems: 'center',
         justifyContent: 'center',

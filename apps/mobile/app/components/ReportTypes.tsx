@@ -4,81 +4,32 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import Entypo from '@expo/vector-icons/Entypo'
+import EmergencyTypeCard from './EmergencyTypeCard'
 
 const ReportTypes = () => {
 
     const [isHidden, setIsHidden] = useState(true);
     const toggleOthers = () => setIsHidden(value => !value);
-
-
-
-
+    
+    const emergencyTypes = [
+        {icon: <FontAwesome5 name="car-crash" size={ 24 } color="white" className='text-center' />, title: "Accident" },
+        {icon: <MaterialIcons name="fire-hydrant-alt" size={ 24 } color="#424B5A" className='text-center' />, title: "Fire" },
+        { icon: <FontAwesome6 name="hand-holding-medical" size={ 24 } color="#424B5A" className='text-center' />, title: "Medical" },
+        { icon: <MaterialIcons name="flood" size={ 24 } color="#424B5A" className='text-center' />, title: "Flood" },
+        { icon: <FontAwesome6 name="house-crack" size={ 24 } color="#424B5A" className='text-center' />, title: "Quake" },
+        { icon: <FontAwesome6 name="people-robbery" size={ 24 } color="#424B5A" className='text-center' />, title: "Robbery" },
+        { icon: <FontAwesome6 name="gun" size={ 24 } color="#424B5A" className='text-center' />, title: "Assault" },
+        { icon: <Entypo name="dots-three-horizontal" size={ 24 } color="#424B5A" className='text-center' />, title: "Other" }
+    ];
+    
     return (
-
         <View className='px-6 pt-4'>
             <Text className='font-bold text-xl mb-2'>Select Emergency Type</Text>
             <View className='border-t p-2'>
-                <View className='flex flex-row justify-between my-4'>
-                    <TouchableOpacity
-                        className='flex flex-col justify-items-center  p-2'
-                    >
-                        <View className='bg-[#E02323] p-2 rounded-xl'>
-                            <FontAwesome5 name="car-crash" size={ 24 } color="white" className='text-center' />
-                        </View>
-                        <Text className='text-center'>Accident</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        className='flex flex-col justify-items-center p-2'
-                    >
-                        <MaterialIcons name="fire-hydrant-alt" size={ 24 } color="#424B5A" className='text-center' />
-                        <Text className='text-center'>Fire</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        className='flex flex-col justify-items-center p-2'
-                    >
-                        <FontAwesome6 name="hand-holding-medical" size={ 24 } color="#424B5A" className='text-center' />
-                        <Text className='text-center'>Medical</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        className='flex flex-col justify-items-center p-2'
-                    >
-                        <MaterialIcons name="flood" size={ 24 } color="#424B5A" className='text-center' />
-                        <Text className='text-center'>Flood</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View className='flex flex-row justify-between my-4'>
-                    <TouchableOpacity
-                        className='flex flex-col justify-items-center p-2'
-                    >
-                        <FontAwesome6 name="house-crack" size={ 24 } color="#424B5A" className='text-center' />
-                        <Text className='text-center'>Quake</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        className='flex flex-col justify-items-center p-2'
-                    >
-                        <FontAwesome6 name="people-robbery" size={ 24 } color="#424B5A" className='text-center' />
-                        <Text className='text-center'>Robbery</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        className='flex flex-col justify-items-center p-2'
-                    >
-                        <FontAwesome6 name="gun" size={ 24 } color="#424B5A" className='text-center' />
-                        <Text className='text-center'>Assault</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        className='flex flex-col justify-items-center p-2'
-                        onPress={ toggleOthers }
-                    >
-                        <Entypo name="dots-three-horizontal" size={ 24 } color="#424B5A" className='text-center' />
-                        <Text className='text-center'>Other</Text>
-                    </TouchableOpacity>
+                <View className='flex flex-row w-full my-4' style={{ flexWrap: "wrap" }}>
+                    { emergencyTypes?.map((emergencyType)=> (
+                        <EmergencyTypeCard key={ emergencyType.title } icon={ emergencyType.icon } title={emergencyType.title }/>
+                    ))}
                 </View>
 
             </View>
@@ -87,10 +38,7 @@ const ReportTypes = () => {
             {/* Others */ }
             <TextInput
                 id='Others'
-                className=' bg-white rounded-xl border focus:border-[#E02323] p-4'
-                style={ {
-                    display: isHidden ? 'none' : 'block'
-                } }
+                className={`bg-white rounded-xl border focus:border-[#E02323] p-4 ${isHidden ? 'hidden' : 'block'}`}
                 placeholder='Stuck in elevator'
             />
         </View>
