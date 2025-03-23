@@ -10,6 +10,7 @@
     }
   },
   "include": [
+    "custom.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
