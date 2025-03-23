@@ -11,7 +11,6 @@ import Signup from "./components/Signup/Signup";
 import Dashboard from "./components/Dashboard/Dashboard";
 import IncidentDetails from "./components/incidentDetails/incidentDetails";
 import Navigation from "./components/Navigation/Navigation";
-import "./App.css";
 
 function App() {
   return (
