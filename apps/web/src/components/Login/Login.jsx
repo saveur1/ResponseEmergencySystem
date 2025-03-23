@@ -28,9 +28,10 @@ function Login() {
 
   return (
     <div className="login-container">
-      <div className="login-card">
-        <h2>Emergency Response System</h2>
-        <h4>Responder Login</h4>
+      <div className="login-card middle_card_width">
+        <figure className="login_icon">
+            <img src="/icon.png" alt="Emergency Response" width={ 300 } height={ 200 } />
+        </figure>
         <form onSubmit={handleLogin}>
           <div className="form-group">
             <label>Email</label>

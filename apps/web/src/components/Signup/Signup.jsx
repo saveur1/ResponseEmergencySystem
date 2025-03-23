@@ -68,32 +68,11 @@ function Signup() {
 
   return (
     <div className="signup-container">
-      <div className="signup-card">
-        <h2>Emergency Response System</h2>
-        <h4>Responder Registration</h4>
-
+      <div className="signup-card middle_card_width">
+        <figure className="login_icon">
+            <img src="/icon.png" alt="Emergency Response" width={ 300 } height={ 200 } />
+        </figure>
         <form onSubmit={handleSubmit}>
-          <div className="profile-image-section">
-            <div className="profile-image-preview">
-              {imagePreview ? (
-                <img src={imagePreview} alt="Profile preview" />
-              ) : (
-                <div className="image-placeholder">
-                  <span>Profile Image</span>
-                </div>
-              )}
-            </div>
-            <input
-              type="file"
-              id="profileImage"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-            <label htmlFor="profileImage" className="upload-btn">
-              Choose Image
-            </label>
-          </div>
-
           <div className="form-group">
             <label>Full Name</label>
             <input
@@ -146,6 +125,28 @@ function Signup() {
               <option value="admin">Administrator</option>
             </select>
           </div>
+          <figure className="image_signup">
+            <div className="profile-image-preview">
+                {imagePreview ? (
+                    <img src={imagePreview} alt="Profile preview" />
+                ) : (
+                    <div className="image-placeholder">
+                    <span>Profile Image</span>
+                    </div>
+                )}
+                </div>
+                <div className="profile-image-section">
+                <input
+                    type="file"
+                    id="profileImage"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                />
+                <label htmlFor="profileImage" className="upload-btn">
+                Choose Image
+                </label>
+            </div>
+          </figure>
 
           <button type="submit" className="signup-button">
             Register

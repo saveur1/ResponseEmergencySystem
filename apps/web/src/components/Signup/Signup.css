@@ -34,11 +34,17 @@
   align-items: center;
   margin-bottom: 20px;
 }
+.image_signup {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
 
 .profile-image-preview {
   width: 120px;
   height: 120px;
-  border-radius: 50%;
+  border-radius: 15px;
   overflow: hidden;
   margin-bottom: 10px;
   display: flex;
