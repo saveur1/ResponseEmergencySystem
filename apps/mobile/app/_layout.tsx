@@ -12,6 +12,9 @@ const _layout = () => {
       />
       <Stack.Screen name="Auth/login" options={{ headerShown: false }} />
       <Stack.Screen name="Auth/register" options={{ headerShown: false }} />
+      <Stack.Screen name="EmergenciesScreen" options={{ headerShown: false }} />
+      <Stack.Screen name="ViewEmergency" options={{ headerShown: false }} />
+      <Stack.Screen name="NotificationsScreen" options={{ headerShown: false }} />
     </Stack>
   );
 };

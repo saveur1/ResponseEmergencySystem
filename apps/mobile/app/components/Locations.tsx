@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import EvilIcons from '@expo/vector-icons/EvilIcons'
+import { router } from 'expo-router'
 
 const Locations = () => {
     return (
@@ -14,7 +15,7 @@ const Locations = () => {
                         Nyamirambo, Kigali, KN 345
                     </Text>
                     <TouchableOpacity
-                    // onPress={ }
+                        onPress={ () => router.navigate('/ReportEmergencyLocation') }
                     >
                         <Text className='text-[#E02323] font-bold'>Change</Text>
                     </TouchableOpacity>
