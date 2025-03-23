@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "./Dashboard.css";
 
 function Dashboard() {
-  // Mock data - we need would fetch this from your API
+  // Mock data - we need would fetch this from our API
   const [incidents, setIncidents] = useState([
     {
       id: 1,
@@ -32,6 +32,24 @@ function Dashboard() {
     },
   ]);
 
+
+  const handleRespond = (incidentId) => {
+    // Update incident status in the database
+    // make an API call
+    console.log(`Responding to incident ${incidentId}`);
+
+    // Change status to "Responding"
+   
+    const updatedIncidents = incidents.map((inc) =>
+      inc.id === incidentId ? { ...inc, status: "Responding" } : inc
+    );
+    setIncidents(updatedIncidents);
+
+    // Navigate to the incident details page
+    navigate(`/incident/${incidentId}`);
+  };
+
+ 
   return (
     <div className="dashboard-container">
       <h2>Active Incidents</h2>
@@ -75,7 +93,12 @@ function Dashboard() {
               <Link to={`/incident/${incident.id}`} className="btn-details">
                 View Details
               </Link>
-              <button className="btn-respond">Respond</button>
+              <button
+                className="btn-respond"
+                onClick={() => handleRespond(incident.id)}
+              >
+                Respond
+              </button>
             </div>
           </div>
         ))}
