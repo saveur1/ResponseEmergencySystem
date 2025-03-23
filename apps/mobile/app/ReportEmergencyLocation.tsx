@@ -83,6 +83,9 @@ const ReportEmergency = () => {
                 </TouchableOpacity>
             </View>
 
+            {/* Change Location */ }
+            <ChangeLocation />
+
 
         </SafeAreaView>
     )
