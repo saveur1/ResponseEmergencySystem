@@ -17,5 +17,9 @@
     "url": "https://github.com/saveur1/ResponseEmergencySystem/issues"
   },
   "homepage": "https://github.com/saveur1/ResponseEmergencySystem#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "expo": "^52.0.40",
+    "react-native-maps": "^1.20.1"
+  }
 }
