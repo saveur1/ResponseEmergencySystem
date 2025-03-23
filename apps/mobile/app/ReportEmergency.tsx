@@ -10,5 +10,3 @@ const ReportEmergency = () => {
 }
 
 export default ReportEmergency
-
-const styles = StyleSheet.create({})
