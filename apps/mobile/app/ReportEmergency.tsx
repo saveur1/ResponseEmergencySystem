@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import ReportTypes from './components/ReportTypes';
 import Locations from './components/Locations';
@@ -6,7 +6,6 @@ import Proof from './components/Proof';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
-import { router } from 'expo-router';
 import Reports from './components/Reports';
 
 
@@ -20,16 +19,12 @@ const ReportEmergency = () => {
 
     return (
         <SafeAreaView className='font-poppins relative h-full'>
-
-
             <ScrollView className='font-poppins flex flex-col h-full  content-center mb-32'>
                 {/* Emergency Types */ }
                 <ReportTypes />
 
-
                 {/* Location */ }
                 <Locations />
-
 
                 {/* Proof */ }
                 <Proof />
@@ -41,11 +36,7 @@ const ReportEmergency = () => {
 
 
             {/* Successful Report */ }
-            <View className='h-full w-full absolute  px-2  mb-0 pt-2 pb-4 bg-black/30 backdrop-blur-sm'
-                style={ {
-                    display: isSuccessShown ? 'block' : 'none'
-                } }
-            >
+            <View className={`h-full w-full absolute  px-2  mb-0 pt-2 pb-4 bg-black/30 backdrop-blur-sm1 ${isSuccessShown ? 'block' : 'hidden'}`}>
                 <View style={ styles.successful }>
 
                     <TouchableOpacity
@@ -95,9 +86,9 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: '30%',
         left: '23%',
-        padding: '20',
+        padding: 20,
         textAlign: 'center',
         borderRadius: 15,
-        lineHeight: '150%',
+        lineHeight: 150
     }
 })
