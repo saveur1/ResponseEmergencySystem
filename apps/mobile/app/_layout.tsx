@@ -12,6 +12,9 @@ const _layout = () => {
         name="ReportEmergency"
         options={{ title: 'Report Emergency' }}
       />
+      <Stack.Screen name="EmergenciesScreen" options={{ headerShown: false }} />
+      <Stack.Screen name="ViewEmergency" options={{ headerShown: false }} />
+      <Stack.Screen name="NotificationsScreen" options={{ headerShown: false }} />
     </Stack>
   );
 };
