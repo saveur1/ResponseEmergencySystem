@@ -13,7 +13,9 @@ const Index = () => {
                 <Text>Hey!</Text>
                 <View className="flex justify-between flex-row mt-1">
                     <Text className="font-bold text-xl" >Constantine </Text>
-                    <MaterialCommunityIcons name="bell-ring-outline" size={ 24 } color="black" />
+                    <TouchableOpacity>
+                        <MaterialCommunityIcons name="bell-ring-outline" size={ 24 } color="black" />
+                    </TouchableOpacity>
                 </View>
             </View>
             <View>
@@ -22,13 +24,13 @@ const Index = () => {
                     <Text>Click <Text style={ { color: '#E02323', fontWeight: 'bold' } }>SOS button</Text> to call the help.</Text>
                 </View>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                     onPress={ () => router.navigate('/ReportEmergency') }
                     style={ styles.sosButton }>
 
                     <Text className="text-white font-bold text-4xl">SOS</Text>
                 </TouchableOpacity>
-                
+
                 <View className="bg-white rounded-md flex flex-row items-center justify-between px-4">
                     <Text style={ { fontWeight: '500', color: '#212121', } }>
                         Volunteer for help
