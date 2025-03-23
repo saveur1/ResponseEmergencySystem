@@ -5,8 +5,11 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import Entypo from '@expo/vector-icons/Entypo'
 import EmergencyTypeCard from './EmergencyTypeCard'
-
-const ReportTypes = () => {
+interface EmergencyProps {
+    emergencyType: string;
+    setEmergencyType: React.Dispatch<React.SetStateAction<string>>;
+}
+const ReportTypes = ({ emergencyType, setEmergencyType}: EmergencyProps) => {
 
     const [isHidden, setIsHidden] = useState(true);
     const toggleOthers = () => setIsHidden(value => !value);
@@ -27,8 +30,14 @@ const ReportTypes = () => {
             <Text className='font-bold text-xl mb-2'>Select Emergency Type</Text>
             <View className='border-t p-2'>
                 <View className='flex flex-row w-full my-4' style={{ flexWrap: "wrap" }}>
-                    { emergencyTypes?.map((emergencyType)=> (
-                        <EmergencyTypeCard key={ emergencyType.title } icon={ emergencyType.icon } title={emergencyType.title }/>
+                    { emergencyTypes?.map((emergency)=> (
+                        <EmergencyTypeCard 
+                            key={ emergency.title } 
+                            icon={ emergency.icon } 
+                            title={emergency.title }
+                            emergencyType={ emergencyType }
+                            setEmergencyType={ setEmergencyType }
+                            />
                     ))}
                 </View>
 

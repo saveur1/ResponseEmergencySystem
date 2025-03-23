@@ -7,14 +7,29 @@ import Proof from './components/Proof';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import Reports from './components/Reports';
-import ChangeLocation from './components/ChangeLocation';
+import { createEmergencyRecord } from '@/actions/emergency';
 
 
 const ReportEmergency = () => {
 
     const [isSuccessShown, setIsSuccessShown] = useState(false);
-
-    const toggleSuccess = () => setIsSuccessShown(value => !value);
+    const [emergencyType, setEmergencyType] = useState('Accident');
+    const [location, setLocation] = useState("");
+    const [proof, setProof] = useState<string[]>([]);
+    const [report, setReport] = useState("");
+    const toggleSuccess = () => {
+        
+        const data = {
+            type: emergencyType,
+            location,
+            description: report,
+            timestamp: new Date(),
+            status: "pending",
+        }
+        console.log(data);
+        createEmergencyRecord(data);
+        setIsSuccessShown(value => !value)
+    };
 
 
 
@@ -22,16 +37,16 @@ const ReportEmergency = () => {
         <SafeAreaView className='font-poppins relative h-full'>
             <ScrollView className='font-poppins flex flex-col h-full  content-center mb-32'>
                 {/* Emergency Types */ }
-                <ReportTypes />
+                <ReportTypes emergencyType={ emergencyType } setEmergencyType={ setEmergencyType }/>
 
                 {/* Location */ }
-                <Locations />
+                <Locations location={ location } setLocation = { setLocation } />
 
                 {/* Proof */ }
                 <Proof />
 
                 {/* Report */ }
-                <Reports />
+                <Reports report = { report } setReport = { setReport }/>
             </ScrollView>
 
 
