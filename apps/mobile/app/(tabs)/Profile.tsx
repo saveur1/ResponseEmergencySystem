@@ -1,14 +1,21 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { useNavigation } from "expo-router";
 
 const Profile = () => {
-    return (
-        <View>
-            <Text>Profile</Text>
-        </View>
-    )
-}
+  const navigate = useNavigation();
+  return (
+    <View>
+      <Text>Profile</Text>
+      <Pressable
+        onPress={() => {
+          navigate.navigate("/Community");
+        }}
+      ></Pressable>
+    </View>
+  );
+};
 
-export default Profile
+export default Profile;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

@@ -1,6 +1,7 @@
-import React from 'react';
-import { Stack } from 'expo-router';
-import '../assets/global.css';
+import React from "react";
+import { Stack } from "expo-router";
+import "../assets/global.css";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const _layout = () => {
   return (
@@ -8,7 +9,7 @@ const _layout = () => {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="ReportEmergency"
-        options={{ title: 'Report Emergency' }}
+        options={{ title: "Report Emergency" }}
       />
       <Stack.Screen name="Auth/login" options={{ headerShown: false }} />
       <Stack.Screen name="Auth/register" options={{ headerShown: false }} />

@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
@@ -19,3 +20,4 @@ export const realtimeDb = getDatabase(app);
 
 // Initialize Firestore
 export const db = getFirestore(app);
+export const storage = getStorage(app);
