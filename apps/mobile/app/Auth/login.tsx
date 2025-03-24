@@ -7,11 +7,12 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import CustomInput from '../components/customInput';
 import Button from '../components/button';
 import { router } from 'expo-router';
+import { AuthContext } from '../Context/context';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -19,7 +20,13 @@ export default function Login() {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loaded, setloaded] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    throw new Error('Auth context must be used within an AuthProvider');
+  }
+  const { login, error, checkAuthStatus } = authContext;
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -48,19 +55,44 @@ export default function Login() {
     return valid;
   };
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuthenticated = await checkAuthStatus();
+      if (isAuthenticated) {
+        router.replace('/(tabs)');
+      }
+    };
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (error) {
+      setLoading(false);
+      showMessage({
+        message: error,
+        hideStatusBar: true,
+        type: 'danger',
+        icon: 'danger',
+        duration: 6000,
+      });
+    }
+  }, [error]);
+
   const handleSubmit = async () => {
     if (validateForm()) {
-      setloaded(true);
-      router.navigate('/(tabs)');
-      if (Error.length !== 0) {
-        setloaded(false);
+      setLoading(true);
+      const success = await login(email, password);
+
+      if (success) {
         showMessage({
-          message: `${Error}`,
-          hideStatusBar: true,
-          type: 'danger',
-          icon: 'danger',
-          duration: 6000,
+          message: 'Login Successful',
+          type: 'success',
+          icon: 'success',
+          duration: 3000,
         });
+        router.replace('/(tabs)');
+      } else {
+        setLoading(false);
       }
     }
   };
@@ -142,7 +174,7 @@ export default function Login() {
               </Text>
             </View>
 
-            <Button title={'Login'} onPress={handleSubmit} loading={loaded} />
+            <Button title={'Login'} onPress={handleSubmit} loading={loading} />
 
             <View
               style={{
@@ -166,33 +198,6 @@ export default function Login() {
                   Sign up
                 </Text>
               </TouchableOpacity>
-            </View>
-
-            <View>
-              <View style={styles.section}>
-                <View style={styles.line} />
-                <Text style={styles.text}>or</Text>
-                <View style={styles.line} />
-              </View>
-
-              <View className="flex flex-row justify-center gap-4">
-                <Image
-                  source={require('../../assets/images/Google.png')}
-                  className="w-14 h-14"
-                />
-                <Image
-                  source={require('../../assets/images/facebook.png')}
-                  className="w-14 h-14"
-                />
-                <Image
-                  source={require('../../assets/images/Instagram.png')}
-                  className="w-14 h-14"
-                />
-                <Image
-                  source={require('../../assets/images/twitter.png')}
-                  className="w-14 h-14"
-                />
-              </View>
             </View>
           </KeyboardAvoidingView>
         </View>
