@@ -84,7 +84,7 @@
   color: white;
 }
 
-.incident-location {
+.incident-location  a{
   margin-bottom: 8px;
   font-size: 16px;
 }

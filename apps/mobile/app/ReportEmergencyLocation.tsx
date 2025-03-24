@@ -106,6 +106,6 @@ const styles = StyleSheet.create({
     padding: 20,
     textAlign: "center",
     borderRadius: 15,
-    lineHeight: "150%",
+    lineHeight: 150,
   },
 });

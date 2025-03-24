@@ -18,5 +18,5 @@
     "metro.config.js",
     "tailwind.config.js",
     "nativewind-env.d.ts"
-, "babel.config.js"  ]
+, "babel.config.js", "types.tsx"  ]
 }

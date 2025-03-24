@@ -11,13 +11,14 @@ function Dashboard() {
     useEffect(() => {
         // Fetch incidents from the API
         const handleFetchIncidents = async () => {
-            const emergencies = await fetchEmergencies();
-            console.log(emergencies);
-            setIncidents(emergencies);
+                const emergencies = await fetchEmergencies();
+                console.log(emergencies);
+                setIncidents(emergencies?.sort((a, b) => b.timestamp - a.timestamp));
+          
         }
         
         handleFetchIncidents();
-    }, []);
+    });
 
 
   const handleRespond = (incidentId) => {
@@ -72,9 +73,11 @@ function Dashboard() {
                 {incident?.status}
               </span>
             </div>
-            <div className="incident-location">{String(incident?.location)}</div>
+            <div className="incident-location">
+                <a href={`https://www.google.com/maps?q=${incident?.location?.latitude},${incident?.location?.longitude}`} target="_blank">Open in Google Maps</a>
+            </div>
             <div className="incident-time">
-              Reported: {new Date(incident?.reportedAt)?.toLocaleTimeString()}
+              Reported: {new Date(incident?.timestamp)?.toLocaleString()}
             </div>
             <div className="incident-actions">
               <Link to={`/incident/${incident?.id}`} className="btn-details">

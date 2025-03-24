@@ -60,6 +60,7 @@ const ChangeLocation = ({ location, setLocation }: ChangeLocationProps) => {
 
       const { latitude, longitude } = currentLocation.coords;
       setSelectedLocation({ latitude, longitude });
+      setLocation({latitude, longitude})
       Alert.alert("Success", "Current location detected");
     } catch (error) {
       console.error("Error getting location:", error);

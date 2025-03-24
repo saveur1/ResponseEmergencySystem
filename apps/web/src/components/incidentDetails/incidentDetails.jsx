@@ -1,138 +1,131 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { fetchEmergencies } from "../../actions/emergency";
 
 function IncidentDetails() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-  // this is Mock data we need to fetch this based on the ID
-  const [incident, setIncident] = useState({
-    id: id,
-    type: "Medical",
-    description: "Person having chest pain",
-    location: "123 Main St",
-    coordinates: { lat: 37.7749, lng: -122.4194 },
-    status: "New",
-    priority: "High",
-    reportedAt: "2025-03-19T10:30:00",
-    reportedBy: {
-      name: "John Doe",
-      phone: "555-123-4567",
-    },
-  });
+    const [incident, setIncident] = useState(null);
+    const [statusUpdate, setStatusUpdate] = useState("");
+    const [loading, setLoading] = useState(true);
 
-  const [statusUpdate, setStatusUpdate] = useState("");
+    useEffect(() => {
+        const fetchIncident = async () => {
+            try {
+                const emergencies = await fetchEmergencies();
+                const selectedIncident = emergencies.find((emergency) => emergency.id === id);
+                setIncident(selectedIncident);
+            } catch (error) {
+                console.error("Error fetching incident:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  const handleStatusChange = (newStatus) => {
-    setIncident({ ...incident, status: newStatus });
-    // need to send this update to our backend
-  };
+        fetchIncident();
+    }, [id]);
 
-  const handleAddUpdate = () => {
-    if (statusUpdate.trim()) {
-      // need to send this update to our backend
-      alert(`Update added: ${statusUpdate}`);
-      setStatusUpdate("");
+    const handleStatusChange = async (newStatus) => {
+        try {
+            await updateEmergencyStatus(id, { status: newStatus });
+            setIncident({ ...incident, status: newStatus });
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
+    };
+
+    const handleAddUpdate = async () => {
+        if (statusUpdate.trim()) {
+            try {
+                await updateEmergencyStatus(id, { notes: statusUpdate });
+                alert(`Update added: ${statusUpdate}`);
+                setStatusUpdate("");
+            } catch (error) {
+                console.error("Error adding update:", error);
+            }
+        }
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
     }
-  };
 
-  return (
-    <div className="incident-details-container">
-      <button className="back-button" onClick={() => navigate("/dashboard")}>
-        &larr; Back to Dashboard
-      </button>
+    if (!incident) {
+        return <div>Incident not found</div>;
+    }
 
-      <div className="incident-details-card">
-        <div className="incident-details-header">
-          <h2>
-            {incident.type} Emergency - {incident.priority} Priority
-          </h2>
-          <span
-            className={`status-badge status-${incident.status
-              .toLowerCase()
-              .replace(" ", "-")}`}
-          >
-            {incident.status}
-          </span>
-        </div>
-
-        <div className="incident-info-section">
-          <div className="info-row">
-            <span className="info-label">Description:</span>
-            <span className="info-value">{incident.description}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-label">Location:</span>
-            <span className="info-value">{incident.location}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-label">Reported At:</span>
-            <span className="info-value">
-              {new Date(incident.reportedAt).toLocaleString()}
-            </span>
-          </div>
-          <div className="info-row">
-            <span className="info-label">Reported By:</span>
-            <span className="info-value">
-              {incident.reportedBy.name} ({incident.reportedBy.phone})
-            </span>
-          </div>
-        </div>
-
-        <div className="map-placeholder">
-          [Map would be displayed here in production]
-        </div>
-
-        <div className="status-controls">
-          <h3>Update Status</h3>
-          <div className="status-buttons">
-            <button
-              onClick={() => handleStatusChange("Acknowledged")}
-              className={incident.status === "Acknowledged" ? "active" : ""}
-            >
-              Acknowledge
+    return (
+        <div className="incident-details-container">
+            <button className="back-button" onClick={() => navigate("/dashboard")}>
+                &larr; Back to Dashboard
             </button>
-            <button
-              onClick={() => handleStatusChange("Dispatched")}
-              className={incident.status === "Dispatched" ? "active" : ""}
-            >
-              Dispatch
-            </button>
-            <button
-              onClick={() => handleStatusChange("En Route")}
-              className={incident.status === "En Route" ? "active" : ""}
-            >
-              En Route
-            </button>
-            <button
-              onClick={() => handleStatusChange("On Scene")}
-              className={incident.status === "On Scene" ? "active" : ""}
-            >
-              On Scene
-            </button>
-            <button
-              onClick={() => handleStatusChange("Resolved")}
-              className={incident.status === "Resolved" ? "active" : ""}
-            >
-              Resolved
-            </button>
-          </div>
-        </div>
 
-        <div className="communication-section">
-          <h3>Add Status Update</h3>
-          <textarea
-            value={statusUpdate}
-            onChange={(e) => setStatusUpdate(e.target.value)}
-            placeholder="Enter status update or notes..."
-          ></textarea>
-          <button onClick={handleAddUpdate}>Add Update</button>
+            <div className="incident-details-card">
+                <div className="incident-details-header">
+                    <h2>
+                        {incident.type} Emergency - {incident.priority} Priority
+                    </h2>
+                    <span
+                        className={`status-badge status-${incident.status
+                            .toLowerCase()
+                            .replace(" ", "-")}`}
+                    >
+                        {incident.status}
+                    </span>
+                </div>
+
+                <div className="incident-info-section">
+                    <div className="info-row">
+                        <span className="info-label">Description:</span>
+                        <span className="info-value">{incident.description}</span>
+                    </div>
+                    <span className="info-value">
+                            {incident.location?.address || "N/A"} (
+                            Lat: {incident.location?.latitude || "N/A"}, 
+                            Long: {incident.location?.longitude || "N/A"})
+                        </span>
+                    <div className="info-row">
+                        <span className="info-label">Reported At:</span>
+                        <span className="info-value">
+                            {new Date(incident.timestamp).toLocaleString()}
+                        </span>
+                    </div>
+                    {/* <div className="info-row">
+                        <span className="info-label">Reported By:</span>
+                        <span className="info-value">
+                            {incident.reportedBy?.name || "N/A"} ({incident.reportedBy?.phone || "N/A"})
+                        </span>
+                    </div> */}
+                </div>
+
+                <div className="status-controls">
+                    <h3>Update Status</h3>
+                    <div className="status-buttons">
+                        {["Acknowledged", "Dispatched", "En Route", "On Scene", "Resolved"].map(
+                            (status) => (
+                                <button
+                                    key={status}
+                                    onClick={() => handleStatusChange(status)}
+                                    className={incident.status === status ? "active" : ""}
+                                >
+                                    {status}
+                                </button>
+                            )
+                        )}
+                    </div>
+                </div>
+
+                <div className="communication-section">
+                    <h3>Add Status Update</h3>
+                    
+                    <button style={{
+                        width:"100%"
+                    }} onClick={handleAddUpdate}>Update status</button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default IncidentDetails;
