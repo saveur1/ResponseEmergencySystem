@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "firebase": "firebase serve --only hosting",
     "mobile": "cd apps/mobile && npm start",
-    "web": "cd apps/web && npm run dev"
+    "web": "cd apps/web && npm run dev",
+    "mobile-install": "cd apps/mobile && npm install",
+    "web-install": "cd apps/web && npm install"
   },
   "repository": {
     "type": "git",

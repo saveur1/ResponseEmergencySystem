@@ -1,6 +1,6 @@
 import { ImagePickerAsset } from "expo-image-picker";
 import { db, storage } from "../utils/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 
 interface EmergencyProps {
   type: string;
@@ -49,6 +49,25 @@ export const createEmergencyRecord = async (emergency: EmergencyProps) => {
     throw error;
   }
 };
+
+
+  // Function to fetch all emergencies
+export const ftetchEmergencies = async (): Promise<EmergencyProps[]> => {
+    try {
+      const emergencyRef = collection(db, "emergencies");
+      const snapshot = await getDocs(emergencyRef);
+      
+      const emergencies: EmergencyProps[] = snapshot.docs.map(doc => ({
+        id: doc.id, // Assign document ID
+        ...(doc.data() as Omit<EmergencyProps, "id">), // Ensure the data matches EmergencyProps
+      }));
+      
+      return emergencies;
+    } catch (error) {
+      console.error("Error fetching emergencies:", error);
+      return [];
+    }
+  };
 
 // Helper function to upload media files to Cloudinary
 async function uploadMedia(
