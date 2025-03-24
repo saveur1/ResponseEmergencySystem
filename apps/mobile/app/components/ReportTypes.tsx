@@ -1,60 +1,122 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
-import MaterialIcons from '@expo/vector-icons/MaterialIcons'
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
-import Entypo from '@expo/vector-icons/Entypo'
-import EmergencyTypeCard from './EmergencyTypeCard'
-interface EmergencyProps {
-    emergencyType: string;
-    setEmergencyType: React.Dispatch<React.SetStateAction<string>>;
-}
-const ReportTypes = ({ emergencyType, setEmergencyType}: EmergencyProps) => {
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useState } from "react";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Entypo from "@expo/vector-icons/Entypo";
 
-    const [isHidden, setIsHidden] = useState(true);
-    const toggleOthers = () => setIsHidden(value => !value);
-    
-    const emergencyTypes = [
-        {icon: <FontAwesome5 name="car-crash" size={ 24 } color="white" className='text-center' />, title: "Accident" },
-        {icon: <MaterialIcons name="fire-hydrant-alt" size={ 24 } color="#424B5A" className='text-center' />, title: "Fire" },
-        { icon: <FontAwesome6 name="hand-holding-medical" size={ 24 } color="#424B5A" className='text-center' />, title: "Medical" },
-        { icon: <MaterialIcons name="flood" size={ 24 } color="#424B5A" className='text-center' />, title: "Flood" },
-        { icon: <FontAwesome6 name="house-crack" size={ 24 } color="#424B5A" className='text-center' />, title: "Quake" },
-        { icon: <FontAwesome6 name="people-robbery" size={ 24 } color="#424B5A" className='text-center' />, title: "Robbery" },
-        { icon: <FontAwesome6 name="gun" size={ 24 } color="#424B5A" className='text-center' />, title: "Assault" },
-        { icon: <Entypo name="dots-three-horizontal" size={ 24 } color="#424B5A" className='text-center' />, title: "Other" }
-    ];
-    
+interface ReportTypes {
+  onSelected: (value: string) => void;
+  selectedEmergency: string;
+}
+
+const ReportTypes = ({ onSelected, selectedEmergency }: ReportTypes) => {
+  const [isHidden, setIsHidden] = useState(true);
+  const [otherText, setOtherText] = useState("");
+
+  const toggleOthers = () => {
+    setIsHidden((value) => !value);
+    if (!isHidden) {
+      onSelected(otherText || "Other");
+    }
+  };
+
+  const handleSelect = (type: string) => {
+    onSelected(type);
+    if (type !== "Other") {
+      setIsHidden(true);
+    }
+  };
+
+  const emergencyTypes = [
+    { id: 1, type: "Accident", icon: "car-crash", library: FontAwesome5 },
+    { id: 2, type: "Fire", icon: "fire-hydrant-alt", library: MaterialIcons },
+    {
+      id: 3,
+      type: "Medical",
+      icon: "hand-holding-medical",
+      library: FontAwesome6,
+    },
+    { id: 4, type: "Flood", icon: "flood", library: MaterialIcons },
+    { id: 5, type: "Quake", icon: "house-crack", library: FontAwesome6 },
+    { id: 6, type: "Robbery", icon: "people-robbery", library: FontAwesome6 },
+    { id: 7, type: "Assault", icon: "gun", library: FontAwesome6 },
+    {
+      id: 8,
+      type: "Other",
+      icon: "dots-three-horizontal",
+      library: Entypo,
+      special: true,
+    },
+  ];
+
+  const renderEmergencyItem = (item: any, index: number) => {
+    const IconComponent = item.library;
+    const isSelected = selectedEmergency === item.type;
+    const backgroundColor = isSelected ? "#E02323" : "transparent";
+    const iconColor = isSelected ? "white" : "#424B5A";
+
     return (
-        <View className='px-6 pt-4'>
-            <Text className='font-bold text-xl mb-2'>Select Emergency Type</Text>
-            <View className='border-t p-2'>
-                <View className='flex flex-row w-full my-4' style={{ flexWrap: "wrap" }}>
-                    { emergencyTypes?.map((emergency)=> (
-                        <EmergencyTypeCard 
-                            key={ emergency.title } 
-                            icon={ emergency.icon } 
-                            title={emergency.title }
-                            emergencyType={ emergencyType }
-                            setEmergencyType={ setEmergencyType }
-                            />
-                    ))}
-                </View>
-
-            </View>
-
-
-            {/* Others */ }
-            <TextInput
-                id='Others'
-                className={`bg-white rounded-xl border focus:border-[#E02323] p-4 ${isHidden ? 'hidden' : 'block'}`}
-                placeholder='Stuck in elevator'
-            />
+      <TouchableOpacity
+        key={item.id}
+        className="flex flex-col justify-items-center p-2"
+        onPress={() => {
+          if (item.special) {
+            toggleOthers();
+          } else {
+            handleSelect(item.type);
+          }
+        }}
+      >
+        <View className={`p-2 rounded-xl`} style={{ backgroundColor }}>
+          <IconComponent
+            name={item.icon}
+            size={24}
+            color={iconColor}
+            className="text-center"
+          />
         </View>
+        <Text className="text-center">{item.type}</Text>
+      </TouchableOpacity>
+    );
+  };
 
-    )
-}
+  return (
+    <View className="px-6 pt-4">
+      <Text className="font-bold text-xl mb-2">Select Emergency Type</Text>
+      <View className="border-t p-2">
+        <View className="flex flex-row justify-between flex-wrap my-4">
+          {emergencyTypes.slice(0, 4).map(renderEmergencyItem)}
+        </View>
+        <View className="flex flex-row justify-between flex-wrap my-4">
+          {emergencyTypes.slice(4).map(renderEmergencyItem)}
+        </View>
+      </View>
 
-export default ReportTypes
+      {/* Others */}
+      <TextInput
+        id="Others"
+        className={`bg-white rounded-xl border focus:border-[#E02323] p-4 $"`}
+        placeholder="Stuck in elevator"
+        style={{
+          display: isHidden ? "none" : "flex",
+        }}
+        value={otherText}
+        onChangeText={(text) => {
+          setOtherText(text);
+          if (!isHidden) {
+            onSelected(text);
+          }
+        }}
+      />
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({})
+export default ReportTypes;
