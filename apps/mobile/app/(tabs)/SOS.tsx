@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, StatusBar } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, StatusBar } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-import EmergencyCard from "../components/EmergencyCard";
-import TabSelector from "../components/TabSelection";
-import { Emergency } from "@/types";
-import { collection, orderBy, where, query, getDocs } from "firebase/firestore";
-import { db } from "@/utils/firebase";
+import EmergencyCard from '../components/EmergencyCard';
+import TabSelector from '../components/TabSelection';
+import { Emergency } from '@/types';
+import { collection, orderBy, where, query, getDocs } from 'firebase/firestore';
+import { db } from '@/utils/firebase';
 
 const SOS = () => {
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState("reported-by-you");
+  const [activeTab, setActiveTab] = useState('reported-by-you');
 
   const [emergencies, setEmergencies] = useState<Emergency[]>([]);
 
@@ -18,8 +18,8 @@ const SOS = () => {
     const fetchEmergencies = async () => {
       try {
         let emergenciesQuery = query(
-          collection(db, "emergencies"),
-          orderBy("timestamp", "desc")
+          collection(db, 'emergencies'),
+          orderBy('timestamp', 'desc')
         );
         // if (activeTab === "reported-by-you" && currentUser) {
         //   emergenciesQuery = query(
@@ -43,7 +43,7 @@ const SOS = () => {
               data.location?.address ||
               `${data.location?.latitude}, ${data.location?.longitude}`,
             description: data.description,
-            icon: "", // Set appropriate icon based on emergency type
+            // icon: "",
             timestamp: data.timestamp,
             status: data.status,
             images: data.images || [],
@@ -52,7 +52,7 @@ const SOS = () => {
 
         setEmergencies(emergenciesData);
       } catch (error) {
-        console.error("Error fetching emergencies:", error);
+        console.error('Error fetching emergencies:', error);
       }
     };
 
@@ -68,8 +68,8 @@ const SOS = () => {
 
       <TabSelector
         tabs={[
-          { id: "reported-by-you", label: "Reported By You" },
-          { id: "reported-by-others", label: "Reported By Others" },
+          { id: 'reported-by-you', label: 'Reported By You' },
+          { id: 'reported-by-others', label: 'Reported By Others' },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -97,15 +97,15 @@ const SOS = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
+    backgroundColor: '#F8F8F8',
   },
   header: {
     padding: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   list: {
     padding: 16,

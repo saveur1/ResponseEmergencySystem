@@ -1,10 +1,12 @@
+import { API_KEY } from "@env";
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: process.env.API_KEY,
+  apiKey: API_KEY,  
   authDomain: "response-emergency-system.firebaseapp.com",
   databaseURL:
     "https://response-emergency-system-default-rtdb.europe-west1.firebasedatabase.app",
@@ -18,6 +20,6 @@ const app = initializeApp(firebaseConfig);
 
 export const realtimeDb = getDatabase(app);
 
-// Initialize Firestore
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+export const FIREBASE_AUTH = getAuth(app)

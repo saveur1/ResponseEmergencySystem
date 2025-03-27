@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Text,
   View,
@@ -11,6 +11,7 @@ import Button from '../components/button';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import CustomInput from '../components/customInput';
 import { router } from 'expo-router';
+import { AuthContext } from '../Context/context';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -20,6 +21,14 @@ export default function Register() {
   const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const auth = useContext(AuthContext);
+
+  if (!auth) {
+    throw new Error('Auth context must be used within an AuthProvider');
+  }
+
+  const { Register } = auth;
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -61,20 +70,28 @@ export default function Register() {
     if (handleValidation()) {
       try {
         setLoading(true);
-        router.navigate('/Auth/login');
+        const success = await Register(email, password, username);
+
+        if (success) {
+          showMessage({
+            message: 'Registration Successful',
+            description: 'You can now log in',
+            type: 'success',
+            icon: 'success',
+            position: 'top',
+          });
+          router.navigate('/Auth/login');
+        }
       } catch (error) {
         showMessage({
-          message: `${error}`,
-          hideStatusBar: true,
+          message: `Registration Failed`,
+          description: 'Please try again',
           type: 'danger',
           icon: 'danger',
           duration: 6000,
         });
       } finally {
         setLoading(false);
-        setEmail('');
-        setPassword('');
-        setUsername('');
       }
     }
   };

@@ -6,17 +6,17 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import React, { useState } from "react";
-import ReportTypes from "./components/ReportTypes";
-import Locations from "./components/Locations";
-import Proof from "./components/Proof";
+} from 'react-native';
+import React, { useState } from 'react';
+import ReportTypes from './components/ReportTypes';
+import Locations from './components/Locations';
+import Proof from './components/Proof';
 
-import AntDesign from "@expo/vector-icons/AntDesign";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { router } from "expo-router";
-import Reports from "./components/Reports";
-import ChangeLocation from "./components/ChangeLocation";
+import AntDesign from '@expo/vector-icons/AntDesign';
+import EvilIcons from '@expo/vector-icons/EvilIcons';
+import { router } from 'expo-router';
+import Reports from './components/Reports';
+import ChangeLocation from './components/ChangeLocation';
 
 const ReportEmergency = () => {
   const [isSuccessShown, setIsSuccessShown] = useState(false);
@@ -27,23 +27,23 @@ const ReportEmergency = () => {
     <SafeAreaView className="font-poppins relative h-full">
       <ScrollView className="font-poppins flex flex-col h-full  content-center mb-32">
         {/* Emergency Types */}
-        <ReportTypes />
+        {/* <ReportTypes /> */}
 
         {/* Location */}
-        <Locations />
+        {/* <Locations /> */}
 
         {/* Proof */}
-        <Proof />
+        {/* <Proof /> */}
 
         {/* Report */}
-        <Reports />
+        {/* <Reports /> */}
       </ScrollView>
 
       {/* Successful Report */}
       <View
         className="h-full w-full absolute  px-2  mb-0 pt-2 pb-4 bg-black/30 backdrop-blur-sm"
         style={{
-          display: isSuccessShown ? "block" : "none",
+          display: isSuccessShown ? 'flex' : 'none',
         }}
       >
         <View style={styles.successful}>
@@ -51,7 +51,7 @@ const ReportEmergency = () => {
             <EvilIcons
               name="close"
               size={24}
-              color={"#CBD4DC"}
+              color={'#CBD4DC'}
               className="top-0 right-0 text-right"
             />
           </TouchableOpacity>
@@ -59,7 +59,7 @@ const ReportEmergency = () => {
           <AntDesign
             name="checkcircle"
             size={52}
-            color={"#00D563"}
+            color={'#00D563'}
             className="text-center mb-4"
           />
           <Text className="text-center font-bold">Help is on the way</Text>
@@ -90,7 +90,7 @@ const ReportEmergency = () => {
       </View>
 
       {/* Change Location */}
-      <ChangeLocation />
+      {/* <ChangeLocation /> */}
     </SafeAreaView>
   );
 };
@@ -99,12 +99,12 @@ export default ReportEmergency;
 
 const styles = StyleSheet.create({
   successful: {
-    backgroundColor: "white",
-    position: "absolute",
-    top: "30%",
-    left: "23%",
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: '30%',
+    left: '23%',
     padding: 20,
-    textAlign: "center",
+    textAlign: 'center',
     borderRadius: 15,
     lineHeight: 150,
   },
