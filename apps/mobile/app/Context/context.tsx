@@ -62,7 +62,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             return true;
           } catch (error: any) {
-            console.error('Registration error:', error);
             setError(error.code);
             return false;
           }
@@ -91,7 +90,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
             return false;
           } catch (error: any) {
-            console.error('Login error:', error);
             setError(error.code);
             return false;
           }
