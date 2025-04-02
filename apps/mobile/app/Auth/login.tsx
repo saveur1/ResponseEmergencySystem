@@ -59,7 +59,7 @@ export default function Login() {
     const checkAuth = async () => {
       const isAuthenticated = await checkAuthStatus();
       if (isAuthenticated) {
-        router.replace("/");
+        router.replace("/(tabs)");
       }
     };
     checkAuth();

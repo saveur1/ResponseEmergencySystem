@@ -1,7 +1,10 @@
-
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Signup.css";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth, firestore, storage } from "../../firebase/config"; // Ensure this path is correct
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -13,6 +16,8 @@ function Signup() {
     profileImage: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -31,7 +36,6 @@ function Signup() {
         profileImage: file,
       });
 
-    
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -40,38 +44,73 @@ function Signup() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
 
- 
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
-      return;
+    try {
+      // Validate passwords match
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords don't match!");
+        setLoading(false);
+        return;
+      }
+
+      // Create user in Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      const user = userCredential.user;
+
+      // Upload profile image if exists
+      let profileImageUrl = null;
+      if (formData.profileImage) {
+        const storageRef = ref(storage, `profileImages/${user.uid}`);
+        await uploadBytes(storageRef, formData.profileImage);
+        profileImageUrl = await getDownloadURL(storageRef);
+      }
+
+      // Update user profile
+      await updateProfile(user, {
+        displayName: formData.fullName,
+        photoURL: profileImageUrl,
+      });
+
+      // Store additional user data in Firestore
+      await setDoc(doc(firestore, "users", user.uid), {
+        fullName: formData.fullName,
+        email: formData.email,
+        role: formData.role,
+        profileImageUrl,
+        createdAt: new Date(),
+      });
+
+      // Navigate to dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message);
+      console.error("Error during signup:", err);
+    } finally {
+      setLoading(false);
     }
-
-   
-    console.log("Registering user:", formData);
-
-    
-    const user = {
-      id: Date.now().toString(),
-      fullName: formData.fullName,
-      email: formData.email,
-      role: formData.role,
-      profileImageUrl: imagePreview, 
-    };
-
-    localStorage.setItem("currentUser", JSON.stringify(user));
-
-    navigate("/dashboard");
   };
 
   return (
     <div className="signup-container">
       <div className="signup-card middle_card_width">
         <figure className="login_icon">
-            <img src="/icon.png" alt="Emergency Response" width={ 300 } height={ 200 } />
+          <img
+            src="/icon.png"
+            alt="Emergency Response"
+            width={300}
+            height={200}
+          />
         </figure>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Full Name</label>
@@ -127,29 +166,29 @@ function Signup() {
           </div>
           <figure className="image_signup">
             <div className="profile-image-preview">
-                {imagePreview ? (
-                    <img src={imagePreview} alt="Profile preview" />
-                ) : (
-                    <div className="image-placeholder">
-                    <span>Profile Image</span>
-                    </div>
-                )}
+              {imagePreview ? (
+                <img src={imagePreview} alt="Profile preview" />
+              ) : (
+                <div className="image-placeholder">
+                  <span>Profile Image</span>
                 </div>
-                <div className="profile-image-section">
-                <input
-                    type="file"
-                    id="profileImage"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                />
-                <label htmlFor="profileImage" className="upload-btn">
+              )}
+            </div>
+            <div className="profile-image-section">
+              <input
+                type="file"
+                id="profileImage"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              <label htmlFor="profileImage" className="upload-btn">
                 Choose Image
-                </label>
+              </label>
             </div>
           </figure>
 
-          <button type="submit" className="signup-button">
-            Register
+          <button type="submit" className="signup-button" disabled={loading}>
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
