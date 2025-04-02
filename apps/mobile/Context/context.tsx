@@ -1,11 +1,11 @@
-import React, { useState, createContext, ReactNode } from 'react';
+import React, { useState, createContext, ReactNode } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-} from 'firebase/auth';
-import { deleteItemAsync, getItemAsync, setItemAsync } from 'expo-secure-store';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
-import { db, FIREBASE_AUTH } from '../../utils/firebase';
+} from "firebase/auth";
+import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
+import { setDoc, doc, getDoc } from "firebase/firestore";
+import { db, FIREBASE_AUTH } from "../utils/firebase";
 
 interface AuthContextType {
   Register: (
@@ -30,12 +30,12 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [isLog, setIsLog] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<string | null>(null);
 
   const checkAuthStatus = async () => {
-    const storedToken = await getItemAsync('userToken');
+    const storedToken = await getItemAsync("userToken");
     if (storedToken) {
       setIsLog(true);
       setUserToken(storedToken);
@@ -55,9 +55,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               password
             );
 
-            await setDoc(doc(db, 'user', user.uid), {
+            await setDoc(doc(db, "user", user.uid), {
               email,
               fullname,
+              role: "reporter",
             });
 
             return true;
@@ -75,14 +76,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               password
             );
 
-            await setItemAsync('userId', user.uid);
+            await setItemAsync("userId", user.uid);
 
             const token = await user.getIdToken();
             setUserToken(token);
-            await setItemAsync('userToken', token);
-            await setItemAsync('userEmail', email);
+            await setItemAsync("userToken", token);
+            await setItemAsync("userEmail", email);
 
-            const userDocRef = await getDoc(doc(db, 'user', user.uid));
+            const userDocRef = await getDoc(doc(db, "user", user.uid));
 
             if (userDocRef.exists()) {
               setIsLog(true);
@@ -96,12 +97,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         },
 
         logout: async () => {
-          await deleteItemAsync('userToken');
-          await deleteItemAsync('userId');
-          await deleteItemAsync('userEmail');
+          await deleteItemAsync("userToken");
+          await deleteItemAsync("userId");
+          await deleteItemAsync("userEmail");
           setUserToken(null);
           setIsLog(false);
-          setError('');
+          setError("");
         },
 
         checkAuthStatus,

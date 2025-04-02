@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState } from "react";
 import {
   Text,
   View,
@@ -6,26 +6,26 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   StyleSheet,
-} from 'react-native';
-import Button from '../components/button';
-import FlashMessage, { showMessage } from 'react-native-flash-message';
-import CustomInput from '../components/customInput';
-import { router } from 'expo-router';
-import { AuthContext } from '../Context/context';
+} from "react-native";
+import Button from "../components/button";
+import FlashMessage, { showMessage } from "react-native-flash-message";
+import CustomInput from "../components/customInput";
+import { router } from "expo-router";
+import { AuthContext } from "../../Context/context";
 
 export default function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const auth = useContext(AuthContext);
 
   if (!auth) {
-    throw new Error('Auth context must be used within an AuthProvider');
+    throw new Error("Auth context must be used within an AuthProvider");
   }
 
   const { Register } = auth;
@@ -41,27 +41,27 @@ export default function Register() {
 
   const handleValidation = () => {
     let valid = true;
-    if (email.trim() === '') {
-      setEmailError('Email is required');
+    if (email.trim() === "") {
+      setEmailError("Email is required");
       valid = false;
     } else if (!isValidEmail(email)) {
-      setEmailError('Your email is not valid');
+      setEmailError("Your email is not valid");
       valid = false;
       showMessage({
-        message: 'Invalid Email',
-        description: 'Please enter a valid email address.',
-        type: 'warning',
-        icon: 'warning',
-        position: 'top',
+        message: "Invalid Email",
+        description: "Please enter a valid email address.",
+        type: "warning",
+        icon: "warning",
+        position: "top",
       });
     } else {
-      setEmailError('');
+      setEmailError("");
     }
-    if (password.trim() === '') {
-      setPasswordError('Password is required');
+    if (password.trim() === "") {
+      setPasswordError("Password is required");
       valid = false;
     } else {
-      setPasswordError('');
+      setPasswordError("");
     }
     return valid;
   };
@@ -74,20 +74,20 @@ export default function Register() {
 
         if (success) {
           showMessage({
-            message: 'Registration Successful',
-            description: 'You can now log in',
-            type: 'success',
-            icon: 'success',
-            position: 'top',
+            message: "Registration Successful",
+            description: "You can now log in",
+            type: "success",
+            icon: "success",
+            position: "top",
           });
-          router.navigate('/Auth/login');
+          router.navigate("/Auth/login");
         }
       } catch (error) {
         showMessage({
           message: `Registration Failed`,
-          description: 'Please try again',
-          type: 'danger',
-          icon: 'danger',
+          description: "Please try again",
+          type: "danger",
+          icon: "danger",
           duration: 6000,
         });
       } finally {
@@ -102,75 +102,75 @@ export default function Register() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View
           style={{
-            backgroundColor: '#ffffff',
+            backgroundColor: "#ffffff",
             paddingVertical: 30,
             paddingHorizontal: 30,
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
           }}
         >
-          <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#E02323' }}>
-            Let's sign you up.{' '}
+          <Text style={{ fontSize: 30, fontWeight: "bold", color: "#E02323" }}>
+            Let's sign you up.{" "}
           </Text>
           <Text style={{ paddingVertical: 4 }}>Welcome.</Text>
 
           <View style={{ paddingTop: 25, paddingBottom: 100 }}>
             <Text style={styles.label}>Full Name</Text>
             <CustomInput
-              label={'Your name'}
-              icon2={'account-circle-outline'}
+              label={"Your name"}
+              icon2={"account-circle-outline"}
               value={username}
               onChangeText={setUsername}
             />
 
             <Text style={styles.label}>Email</Text>
             <CustomInput
-              label={'Your email'}
-              icon2={'email-outline'}
+              label={"Your email"}
+              icon2={"email-outline"}
               value={email}
               onChangeText={setEmail}
               error={emailError}
             />
             {emailError ? (
-              <Text style={{ color: 'red' }}>{emailError}</Text>
+              <Text style={{ color: "red" }}>{emailError}</Text>
             ) : null}
 
             <Text style={styles.label}>Password</Text>
             <CustomInput
-              label={'Enter password'}
-              icon2={'lock-outline'}
+              label={"Enter password"}
+              icon2={"lock-outline"}
               secureTextEntry={!showPassword}
               onChangeText={setPassword}
               error={passwordError}
-              icon1={showPassword ? 'eye-outline' : 'eye-off-outline'}
+              icon1={showPassword ? "eye-outline" : "eye-off-outline"}
               onPress={togglePasswordVisibility}
               value={password}
             />
             {passwordError ? (
-              <Text style={{ color: 'red' }}>{passwordError}</Text>
+              <Text style={{ color: "red" }}>{passwordError}</Text>
             ) : null}
           </View>
 
           <Button
-            title={'Sign up'}
+            title={"Sign up"}
             onPress={handleRegister}
             loading={loading}
           />
 
           <View
             style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
               paddingVertical: 20,
             }}
           >
             <Text>Already a member? </Text>
-            <TouchableOpacity onPress={() => router.navigate('/Auth/login')}>
+            <TouchableOpacity onPress={() => router.navigate("/Auth/login")}>
               <Text
-                style={{ color: '#E02323', fontWeight: '500', marginLeft: 2 }}
+                style={{ color: "#E02323", fontWeight: "500", marginLeft: 2 }}
               >
                 Log in
               </Text>
@@ -185,6 +185,6 @@ export default function Register() {
 const styles = StyleSheet.create({
   label: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
   },
 });
