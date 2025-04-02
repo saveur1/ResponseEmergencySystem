@@ -1,6 +1,8 @@
 import { ImagePickerAsset } from "expo-image-picker";
 import { db, storage } from "../utils/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
+import { useS3FileUpload } from "@/hooks/useFileUpload";
+import { Platform } from "react-native";
 
 interface EmergencyProps {
   type: string;
@@ -14,28 +16,60 @@ interface EmergencyProps {
   images: ImagePickerAsset[];
   videos: ImagePickerAsset[];
 }
+interface CreateEmergencyProps {
+  type: string;
+  location: {
+    longitude: number;
+    latitude: number;
+  };
+  description: string;
+  timestamp: Date;
+  status: string;
+  images: string[];
+  videos: string[];
+}
+export const useCreateEmergency = () => {
+  const { uploadFileToS3, isUploading } = useS3FileUpload();
+  const createEmergency = async (emergency: EmergencyProps) => {
+    try {
+      // Helper function to convert ImagePickerAsset to File
 
-export const createEmergencyRecord = async (emergency: EmergencyProps) => {
+      const imageUrls = await Promise.all(
+        emergency.images.map(async (image) => {
+          return await uploadFileToS3(image, "public");
+        })
+      );
+
+      // Upload videos and get URLs
+      const videoUrls = await Promise.all(
+        emergency.videos.map(async (video) => {
+          return await uploadFileToS3(video, "public");
+        })
+      );
+      const emergencyId = await createEmergencyRecord({
+        ...emergency,
+        images: imageUrls,
+        videos: videoUrls,
+      });
+      return emergencyId;
+    } catch (error) {
+      console.error("Error creating emergency:", error);
+      throw error;
+    }
+  };
+
+  return { createEmergency };
+};
+
+export const createEmergencyRecord = async (
+  emergency: CreateEmergencyProps
+) => {
   try {
     // Upload images and get URLs
-    const imageUrls = await Promise.all(
-      emergency.images.map(async (image) => {
-        return await uploadMedia(image, "public");
-      })
-    );
-
-    // Upload videos and get URLs
-    const videoUrls = await Promise.all(
-      emergency.videos.map(async (video) => {
-        return await uploadMedia(video, "public");
-      })
-    );
 
     // Create emergency document with media URLs instead of assets
     const emergencyData = {
       ...emergency,
-      images: imageUrls,
-      videos: videoUrls,
       timestamp: Date.now(),
     };
 
@@ -50,73 +84,20 @@ export const createEmergencyRecord = async (emergency: EmergencyProps) => {
   }
 };
 
-
-  // Function to fetch all emergencies
+// Function to fetch all emergencies
 export const ftetchEmergencies = async (): Promise<EmergencyProps[]> => {
-    try {
-      const emergencyRef = collection(db, "emergencies");
-      const snapshot = await getDocs(emergencyRef);
-      
-      const emergencies: EmergencyProps[] = snapshot.docs.map(doc => ({
-        id: doc.id, // Assign document ID
-        ...(doc.data() as Omit<EmergencyProps, "id">), // Ensure the data matches EmergencyProps
-      }));
-      
-      return emergencies;
-    } catch (error) {
-      console.error("Error fetching emergencies:", error);
-      return [];
-    }
-  };
-
-// Helper function to upload media files to Cloudinary
-async function uploadMedia(
-  media: ImagePickerAsset,
-  folder: string
-): Promise<string> {
   try {
-    // Cloudinary unsigned upload preset (you need to create this in your Cloudinary dashboard)
-    const CLOUDINARY_UPLOAD_PRESET = "public";
-    const CLOUDINARY_CLOUD_NAME = "ddydbygzs";
+    const emergencyRef = collection(db, "emergencies");
+    const snapshot = await getDocs(emergencyRef);
 
-    // Create form data for the upload
-    const formData = new FormData();
+    const emergencies: EmergencyProps[] = snapshot.docs.map((doc) => ({
+      id: doc.id, // Assign document ID
+      ...(doc.data() as Omit<EmergencyProps, "id">), // Ensure the data matches EmergencyProps
+    }));
 
-    // Get file extension
-    const fileExt = media.uri.split(".").pop();
-    const filename = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
-
-    // Convert to blob and append to form data
-    const type = media.mimeType || `image/${fileExt}`;
-
-    formData.append(
-      "file",
-      new Blob([media.uri], { type }),
-      `${filename}.${fileExt}`
-    );
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-    formData.append("folder", folder);
-
-    // Upload to Cloudinary using unsigned upload
-    const uploadResponse = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const uploadResult = await uploadResponse.json();
-
-    if (uploadResponse.ok) {
-      return uploadResult.secure_url;
-    } else {
-      throw new Error(
-        uploadResult.error?.message || "Failed to upload to Cloudinary"
-      );
-    }
+    return emergencies;
   } catch (error) {
-    console.error(`Error uploading ${folder}:`, error);
-    throw error;
+    console.error("Error fetching emergencies:", error);
+    return [];
   }
-}
+};

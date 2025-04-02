@@ -1,15 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useContext } from 'react';
-import { router } from 'expo-router';
-import { AuthContext } from '../Context/context';
-import Button from '../components/button';
-import FlashMessage, { showMessage } from 'react-native-flash-message';
+import { StyleSheet, Text, View } from "react-native";
+import React, { useContext } from "react";
+import { router } from "expo-router";
+import { AuthContext } from "../../Context/context";
+import Button from "../components/button";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 const Profile = () => {
   const authContext = useContext(AuthContext);
 
   if (!authContext) {
-    throw new Error('Auth context must be used within an AuthProvider');
+    throw new Error("Auth context must be used within an AuthProvider");
   }
 
   const { logout } = authContext;
@@ -18,17 +18,17 @@ const Profile = () => {
     try {
       await logout();
       showMessage({
-        message: 'Logged Out Successfully',
-        type: 'success',
-        icon: 'success',
+        message: "Logged Out Successfully",
+        type: "success",
+        icon: "success",
         duration: 2000,
       });
-      router.navigate('/Auth/login');
+      router.navigate("/Auth/login");
     } catch (error) {
       showMessage({
-        message: 'Logout Failed',
-        type: 'danger',
-        icon: 'danger',
+        message: "Logout Failed",
+        type: "danger",
+        icon: "danger",
         duration: 2000,
       });
     }
@@ -50,20 +50,20 @@ export default Profile;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   buttonContainer: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 30,
   },
   logoutButton: {
-    backgroundColor: '#E02323',
+    backgroundColor: "#E02323",
   },
 });

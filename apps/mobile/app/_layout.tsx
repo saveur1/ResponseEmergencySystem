@@ -1,7 +1,7 @@
-import React from 'react';
-import { Stack } from 'expo-router';
-import '../assets/global.css';
-import { AuthProvider } from './Context/context';
+import React from "react";
+import { Stack } from "expo-router";
+import "../assets/global.css";
+import { AuthProvider } from "../Context/context";
 
 const _layout = () => {
   return (
@@ -17,14 +17,14 @@ const _layout = () => {
           name="Auth/login"
           options={{
             headerShown: false,
-            title: 'Login',
+            title: "Login",
           }}
         />
         <Stack.Screen name="Auth/register" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="ReportEmergency"
-          options={{ title: 'Report Emergency' }}
+          options={{ title: "Report Emergency" }}
         />
         <Stack.Screen
           name="EmergenciesScreen"
