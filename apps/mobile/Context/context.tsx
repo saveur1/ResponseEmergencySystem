@@ -2,6 +2,7 @@ import React, { useState, createContext, ReactNode } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  User,
 } from "firebase/auth";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { setDoc, doc, getDoc } from "firebase/firestore";
@@ -19,6 +20,7 @@ interface AuthContextType {
   error: string;
   isLog: boolean;
   userToken: string | null;
+  user: User | undefined;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -33,6 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string>("");
   const [isLog, setIsLog] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User>();
 
   const checkAuthStatus = async () => {
     const storedToken = await getItemAsync("userToken");
@@ -61,6 +64,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               role: "reporter",
             });
 
+            setUser(user);
+
             return true;
           } catch (error: any) {
             setError(error.code);
@@ -70,11 +75,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         login: async (email, password) => {
           try {
+            
             const { user } = await signInWithEmailAndPassword(
               FIREBASE_AUTH,
               email,
               password
             );
+
+            setUser(user);
 
             await setItemAsync("userId", user.uid);
 
@@ -109,6 +117,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error,
         isLog,
         userToken,
+        user,
       }}
     >
       {children}

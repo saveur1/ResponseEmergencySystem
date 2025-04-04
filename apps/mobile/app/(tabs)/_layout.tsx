@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const _layout = () => {
@@ -24,19 +23,6 @@ const _layout = () => {
           title: 'SOS',
           tabBarIcon: ({ color }) => (
             <SimpleLineIcons name="exclamation" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="Community"
-        options={{
-          title: 'Community',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="account-group-outline"
-              size={24}
-              color={color}
-            />
           ),
         }}
       />

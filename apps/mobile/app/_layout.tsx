@@ -22,14 +22,8 @@ const _layout = () => {
         />
         <Stack.Screen name="Auth/register" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="ReportEmergency"
-          options={{ title: "Report Emergency" }}
-        />
-        <Stack.Screen
-          name="EmergenciesScreen"
-          options={{ headerShown: false }}
-        />
+       
+        
         <Stack.Screen name="ViewEmergency" options={{ headerShown: false }} />
         <Stack.Screen
           name="NotificationsScreen"
