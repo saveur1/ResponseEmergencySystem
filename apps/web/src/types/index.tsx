@@ -8,10 +8,11 @@ export type tEmergency = {
       }
     | string;
   description: string;
-  timestamp: Date;
+  timestamp: number;
   status: string;
   images?: string[];
   videos?: string[];
+  priority?: string;
 };
 
 export type Notification = {

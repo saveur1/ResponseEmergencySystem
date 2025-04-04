@@ -10,10 +10,9 @@ function Navigation() {
   useEffect(() => {
 
     const storedUser = localStorage.getItem("currentUser");
-    if (storedUser) {
+    if(storedUser) {
       setUser(JSON.parse(storedUser));
     } else {
-    
       navigate("/login");
     }
   }, [navigate]);
@@ -37,15 +36,16 @@ function Navigation() {
           Dashboard
         </Link>
         <div className="user-profile">
-          <div className="profile-image">
+          <div className="profile-container">
             {user.profileImageUrl ? (
               <img src={user.profileImageUrl} alt={user.fullName} />
             ) : (
-              <div className="profile-initials">
+              <div className="profile-image profile-initials">
                 {user.fullName?.charAt(0).toUpperCase() || "U"}
               </div>
             )}
           </div>
+          
           <div className="profile-dropdown">
             <div className="user-name">{user.fullName}</div>
             <div className="user-role">{user.role}</div>

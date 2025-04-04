@@ -55,6 +55,16 @@ function IncidentDetails() {
         return <div>Incident not found</div>;
     }
 
+    const handleLocationClick = () => {
+        const { latitude, longitude } = incident.location || {};
+        if (latitude && longitude) {
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+            window.open(googleMapsUrl, "_blank");
+        } else {
+            alert("Location information is not available.");
+        }
+    };
+
     return (
         <div className="incident-details-container">
             <button className="back-button" onClick={() => navigate("/dashboard")}>
@@ -80,23 +90,24 @@ function IncidentDetails() {
                         <span className="info-label">Description:</span>
                         <span className="info-value">{incident.description}</span>
                     </div>
-                    <span className="info-value">
+                    <div className="info-row">
+                        <span className="info-label">Location:</span>
+                        <span
+                            className="info-value location-link"
+                            onClick={handleLocationClick}
+                            style={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
+                        >
                             {incident.location?.address || "N/A"} (
                             Lat: {incident.location?.latitude || "N/A"}, 
                             Long: {incident.location?.longitude || "N/A"})
                         </span>
+                    </div>
                     <div className="info-row">
                         <span className="info-label">Reported At:</span>
                         <span className="info-value">
                             {new Date(incident.timestamp).toLocaleString()}
                         </span>
                     </div>
-                    {/* <div className="info-row">
-                        <span className="info-label">Reported By:</span>
-                        <span className="info-value">
-                            {incident.reportedBy?.name || "N/A"} ({incident.reportedBy?.phone || "N/A"})
-                        </span>
-                    </div> */}
                 </div>
 
                 <div className="status-controls">
