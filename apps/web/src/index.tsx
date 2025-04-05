@@ -6,13 +6,14 @@ import pagesRoutes from '~react-pages' // Auto-generated routes
 import { StrictMode, Suspense } from 'react'
 import UserDashboardLayout from 'components/layouts/user-dashboard'
 import SimpleLayout from 'components/layouts/simple-layout'
+import { AuthProvider } from 'Context/user-context'
 
 const container = document.getElementById('root') as HTMLDivElement
 const root = createRoot(container)
 
 // Redefine Routers
 const routes =pagesRoutes.map((route: any) => {
-    const listOfPathsWithNavigationHeaders = ["/", "/incident"];
+    const listOfPathsWithNavigationHeaders = ["/", "/incident", "/profile"];
     const layout = listOfPathsWithNavigationHeaders
                         .some((path)=>path.includes(route.path)) ? <UserDashboardLayout /> : <SimpleLayout />;
     return {
@@ -33,7 +34,9 @@ function App() {
 root.render(
     <StrictMode>
         <BrowserRouter>
-            <App />
+            <AuthProvider>
+                <App />
+            </AuthProvider>
         </BrowserRouter>
     </StrictMode>,
 )
