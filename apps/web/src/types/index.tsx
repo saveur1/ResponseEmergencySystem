@@ -23,3 +23,13 @@ export type Notification = {
   icon: string;
   time: string;
 };
+
+export interface UserShape {
+    id?: string,
+    fullName: string,
+    email: string,
+    role: string,
+    password?: string,
+    profileImageUrl: string,
+    createdAt?: Date
+}

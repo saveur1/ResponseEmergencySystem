@@ -1,6 +1,6 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { signupUser } from "../../actions/users";
+import { AuthContext } from "Context/user-context";
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -13,10 +13,15 @@ function Signup() {
   });
 
   const [imagePreview, setImagePreview] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+  if(!authContext) return null;
+  
+  const { setError, isLoading, register, error } = authContext;
 
+  useEffect(()=> {
+      setError("");
+  }, [])
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -41,39 +46,26 @@ function Signup() {
     }
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-    try {
-      if (formData.password !== formData.confirmPassword) {
-        setError("Passwords don't match!");
-        setLoading(false);
-        return;
-      }
+        
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords don't match!");
+            return;
+        }
 
-      const user = await signupUser({
-        fullName: formData.fullName,
-        email: formData.email,
-        role: formData.role,
-        password: formData.password,
-        profileImageUrl: imagePreview,
-      });
+        const user = await register({
+            fullName: formData.fullName,
+            email: formData.email,
+            role: formData.role,
+            profileImageUrl: imagePreview,
+        }, formData.password);
 
-      if (user) {
-        localStorage.setItem("currentUser", JSON.stringify(user));
-        navigate("/dashboard");
-      } else {
-        alert("Something went wrong, please try again!");
-      }
-    } catch (err) {
-      setError((err as Error).message);
-      console.error("Error during signup:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        if (user)
+        navigate("/");
+
+    };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-5">
@@ -81,7 +73,6 @@ function Signup() {
         <figure className="flex justify-center mb-6">
           <img src="/icon.png" alt="Emergency Response" width={200} height={150} />
         </figure>
-        {error && <div className="text-red-500 text-center mb-4">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block font-semibold mb-1">Full Name</label>
@@ -156,9 +147,16 @@ function Signup() {
             <input type="file" id="profileImage" accept="image/*" onChange={handleImageChange} className="hidden" />
             <label htmlFor="profileImage" className="mt-2 px-4 py-2 bg-gray-200 rounded cursor-pointer hover:bg-gray-300">Choose Image</label>
           </div>
+          
+          {error && (
+            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
+              <strong className="font-bold">Error: </strong>
+              <span>{error}</span>
+            </div>
+          )}
 
-          <button type="submit" className="w-full bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600" disabled={loading}>
-            {loading ? "Registering..." : "Register"}
+          <button type="submit" className="w-full bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600" disabled={ authContext?.isLoading }>
+            {isLoading ? "Registering..." : "Register"}
           </button>
         </form>
 

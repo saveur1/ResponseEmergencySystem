@@ -1,6 +1,6 @@
 {
   "name": "emergency-response",
-  "description": "This is a boilerplate build with Vite, React 18, TypeScript, Vitest, Testing Library, TailwindCSS 3, Eslint and Prettier.",
+  "description": "This is admin control panel for emergency response system",
   "version": "0.1.0",
   "private": true,
   "type": "module",
