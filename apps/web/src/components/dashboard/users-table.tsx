@@ -25,36 +25,31 @@ export function UsersTable() {
       id: 'u1',
       name: 'NYIRAMBARUSHIMANA Constantine',
       email: 'constantine@example.com',
-      role: 'Admin',
-      status: 'Active'
+      role: 'Admin'
     },
     {
       id: 'u2',
       name: 'BIZIMANA Gelio',
       email: 'gelio@example.com',
-      role: 'Responder',
-      status: 'Active'
+      role: 'Responder'
     },
     {
       id: 'u3',
       name: 'NSENGA Queen Mireille',
       email: 'queen@example.com',
-      role: 'Dispatcher',
-      status: 'Active'
+      role: 'Dispatcher'
     },
     {
       id: 'u4',
       name: 'MUNEZERO BAGIRA Sostene',
       email: 'sostene@example.com',
-      role: 'Responder',
-      status: 'Offline'
+      role: 'Responder'
     },
     {
       id: 'u5',
       name: 'GIKUNDIRO Ange Marie Happy',
       email: 'ange@example.com',
-      role: 'Dispatcher',
-      status: 'Active'
+      role: 'Dispatcher'
     }
   ]
 
@@ -65,7 +60,6 @@ export function UsersTable() {
           <TableRow>
             <TableHead>User</TableHead>
             <TableHead>Role</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -73,8 +67,8 @@ export function UsersTable() {
           {users.map((user) => (
             <TableRow key={user.id}>
               <TableCell>
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8">
+                <div className="flex items-center gap-10">
+                  <Avatar className="h-8 w-8 ">
                     <AvatarImage
                       src={`/placeholder.svg?height=32&width=32`}
                       alt={user.name}
@@ -91,14 +85,6 @@ export function UsersTable() {
               </TableCell>
               <TableCell>
                 <Badge variant="outline">{user.role}</Badge>
-              </TableCell>
-              <TableCell>
-                <Badge
-                  variant={user.status === 'Active' ? 'default' : 'secondary'}
-                  className={user.status === 'Active' ? 'bg-green-500' : ''}
-                >
-                  {user.status}
-                </Badge>
               </TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>

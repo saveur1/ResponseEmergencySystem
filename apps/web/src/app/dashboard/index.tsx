@@ -7,15 +7,14 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import TopBar from '@/components/dashboard/TopBar'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatCard } from '@/components/dashboard/StatisticsCards'
+import { DashboardCards } from '@/components/dashboard/dashboard-cards';
 
 
 export default function Dashboard() {
   return (
     <div className="flex flex-col h-full">
-      <TopBar />
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
@@ -24,13 +23,13 @@ export default function Dashboard() {
         <Tabs defaultValue="overview" className="space-y-4">
           <div className="flex items-center justify-end">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="reports">Reports</TabsTrigger>
+              {/* <TabsTrigger value="overview">Overview</TabsTrigger> */}
+              {/* <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="reports">Reports</TabsTrigger> */}
             </TabsList>
           </div>
 
-          <TabsContent value="overview" className="space-y-4">
+          {/* <TabsContent value="overview" className="space-y-4"> */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 title="Total Emergencies"
@@ -93,13 +92,13 @@ export default function Dashboard() {
                         color: 'text-red-600'
                       },
                       {
-                        name: 'Police',
+                        name: 'Assault Department',
                         count: 18,
                         icon: Shield,
                         color: 'text-orange-600'
                       },
                       {
-                        name: 'Medical',
+                        name: 'Flood Department',
                         count: 15,
                         icon: Users,
                         color: 'text-blue-600'
@@ -127,8 +126,8 @@ export default function Dashboard() {
               </Card>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="col-span-2">
+            <div className="w-full ">
+              <Card className="">
                 <CardHeader>
                   <CardTitle>Recent Emergencies</CardTitle>
                   <CardDescription>Latest reported emergencies</CardDescription>
@@ -197,31 +196,7 @@ export default function Dashboard() {
                   </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Emergency Distribution</CardTitle>
-                  <CardDescription>Distribution by type</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                    Distribution Chart
-                  </div>
-                </CardContent>
-              </Card>
             </div>
-          </TabsContent>
-
-          <TabsContent value="analytics">
-            <div className="h-[600px] flex items-center justify-center text-xl text-muted-foreground">
-              Analytics Content
-            </div>
-          </TabsContent>
-
-          <TabsContent value="reports">
-            <div className="h-[600px] flex items-center justify-center text-xl text-muted-foreground">
-              Reports Content
-            </div>
-          </TabsContent>
         </Tabs>
       </div>
     </div>

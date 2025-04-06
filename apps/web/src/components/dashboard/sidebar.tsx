@@ -18,6 +18,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
+  SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -30,8 +31,7 @@ export default function SideNav() {
   const currentPath = location.pathname
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      <Sidebar className="border-r border-border">
+      <Sidebar variant='inset' className="border-r border-border">
         <SidebarHeader className="pb-0">
           <div className="flex items-center px-2 py-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-600 text-white">
@@ -87,47 +87,6 @@ export default function SideNav() {
           </SidebarGroup>
 
           <SidebarGroup>
-            <SidebarGroupLabel>Emergency Types</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={currentPath.includes('/fire')}
-                  >
-                    <Link to="/dashboard/fire">
-                      <Flame className="h-4 w-4 text-red-600" />
-                      <span>Fire</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={currentPath.includes('/assault')}
-                  >
-                    <Link to="/dashboard/assault">
-                      <Shield className="h-4 w-4 text-orange-600" />
-                      <span>Assault</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={currentPath.includes('/flood')}
-                  >
-                    <Link to="/dashboard/flood">
-                      <LifeBuoy className="h-4 w-4 text-blue-600" />
-                      <span>Flood</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          <SidebarGroup>
             <SidebarGroupLabel>System</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -139,17 +98,6 @@ export default function SideNav() {
                     <Link to="/dashboard/settings">
                       <Settings className="h-4 w-4" />
                       <span>Settings</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={currentPath.includes('/reports')}
-                  >
-                    <Link to="/dashboard/reports">
-                      <FileText className="h-4 w-4" />
-                      <span>Reports</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -165,7 +113,6 @@ export default function SideNav() {
           </div>
         </SidebarFooter>
       </Sidebar>
-    </SidebarProvider>
   )
 }
 

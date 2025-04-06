@@ -9,7 +9,8 @@ import { StrictMode, Suspense } from 'react'
 import UserDashboardLayout from 'components/layouts/user-dashboard'
 import SimpleLayout from 'components/layouts/simple-layout'
 import { AuthProvider } from 'Context/user-context'
-import { AdminLayout } from './components/layouts/dashboard-layout'
+import AdminLayout from './components/layouts/dashboard-layout'
+// import { AdminLayout } from './components/layouts/dashboard-layout'
 
 const container = document.getElementById('root') as HTMLDivElement
 const root = createRoot(container)
@@ -21,9 +22,8 @@ const routes =pagesRoutes.map((route: any) => {
     let layout = listOfPathsWithNavigationHeaders
                         .some((path)=>path.includes(route.path)) ? <UserDashboardLayout /> : <SimpleLayout />;
 
-    // admin routes
-    console.log(route.path)
-    if(route?.path?.includes("/dashboard")) 
+    //admin routes
+    if(route?.path?.includes("dashboard"))
         layout = <AdminLayout />;
 
     return {

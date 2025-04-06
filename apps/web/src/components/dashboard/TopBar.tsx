@@ -21,12 +21,7 @@ export default function TopBar() {
     <div className="flex h-16 items-center justify-between border-b bg-white px-4">
       <div className="flex items-center gap-2 lg:gap-4">
         <div className="relative w-full max-w-[300px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search emergencies..."
-            className="w-full rounded-full bg-white pl-8 md:w-[300px] lg:w-[300px]"
-          />
+         <h1 className='text-2xl font-bold'>Admin Dashboard</h1>
         </div>
       </div>
       <div className="flex items-center gap-4">
@@ -38,13 +33,13 @@ export default function TopBar() {
               className="relative rounded-full"
             >
               <Bell className="h-4 w-4" />
-              <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-red-600 p-0 text-[10px] text-white">
-                3
+              <Badge className="absolute -right-1 -top-1 h-5 w-5  rounded-full bg-red-600 p-0 text-[10px]  text-white">
+                 <p  className='ml-1'>3</p>
               </Badge>
               <span className="sr-only">Notifications</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[300px]">
+          <DropdownMenuContent align="end" className="w-[300px] bg-white rounded-[10px]">
             <DropdownMenuLabel>Notifications</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <div className="max-h-[300px] overflow-auto">
