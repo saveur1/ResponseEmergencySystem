@@ -1,12 +1,9 @@
 import SideNav from '@/components/dashboard/sidebar'
 import TopBar from '@/components/dashboard/TopBar'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { Outlet } from 'react-router-dom'
 
-interface AdminLayoutProps {
-  children: React.ReactNode
-}
-
-export function AdminLayout({ children }: AdminLayoutProps) {
+export function AdminLayout() {
   return (
     <SidebarProvider>
       <div className="flex w-full h-screen overflow-hidden">
@@ -17,7 +14,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </div>
           <div className="flex-1 overflow-hidden">
             <main className="h-full overflow-y-auto overflow-x-auto bg-gray-50 dark:bg-gray-900">
-              <div className="w-full pb-4">{children}</div>
+              <div className="w-full pb-4">
+                <Outlet />
+              </div>
             </main>
           </div>
         </SidebarInset>
