@@ -14,7 +14,7 @@ const UpdateProfileCard = () => {
     const [name, setName] = useState(user?.fullName);
     const [email, setEmail] = useState(user?.email);;
     const [avatar, setAvatar] = useState<File | null>(null);
-    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dnqhrr6jk/upload`;
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_NAME}/upload`;
     const [imagePreview, setImagePreview] = useState<string | null>(user?.profileImageUrl || null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -27,7 +27,8 @@ const UpdateProfileCard = () => {
         const uploadImageToCloudinary = async (file: File) => {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', 'un_link_upload');
+            formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_PRESET);
+            formData.append('folder', 'profile_pictures');
 
             const response = await fetch(cloudinaryUrl, {
                 method: 'POST',
