@@ -1,8 +1,6 @@
-import { ImagePickerAsset } from "expo-image-picker";
-import { db, storage } from "../utils/firebase";
+import { db } from "../utils/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useS3FileUpload } from "@/hooks/useFileUpload";
-import { Platform } from "react-native";
 
 interface EmergencyProps {
   type: string;
@@ -13,8 +11,8 @@ interface EmergencyProps {
   description: string;
   timestamp: Date;
   status: string;
-  images: ImagePickerAsset[];
-  videos: ImagePickerAsset[];
+  images: string[];
+  videos: string[];
 }
 interface CreateEmergencyProps {
   type: string;
@@ -29,28 +27,10 @@ interface CreateEmergencyProps {
   videos: string[];
 }
 export const useCreateEmergency = () => {
-  const { uploadFileToS3, isUploading } = useS3FileUpload();
   const createEmergency = async (emergency: EmergencyProps) => {
     try {
-      // Helper function to convert ImagePickerAsset to File
+      const emergencyId = await createEmergencyRecord(emergency);
 
-      const imageUrls = await Promise.all(
-        emergency.images.map(async (image) => {
-          return await uploadFileToS3(image, "public");
-        })
-      );
-
-      // Upload videos and get URLs
-      const videoUrls = await Promise.all(
-        emergency.videos.map(async (video) => {
-          return await uploadFileToS3(video, "public");
-        })
-      );
-      const emergencyId = await createEmergencyRecord({
-        ...emergency,
-        images: imageUrls,
-        videos: videoUrls,
-      });
       return emergencyId;
     } catch (error) {
       console.error("Error creating emergency:", error);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { ImagePickerAsset } from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+
 const s3Client = new S3Client({
   region: process.env.EXPO_PUBLIC_AWS_REGION,
   credentials: {
@@ -9,6 +10,7 @@ const s3Client = new S3Client({
     secretAccessKey: process.env.EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY!,
   },
 });
+
 export const useS3FileUpload = () => {
   const bucketName = process.env.EXPO_PUBLIC_AWS_S3_BUCKET_NAME!;
   const [isUploading, setIsUploading] = useState(false);
@@ -20,8 +22,7 @@ export const useS3FileUpload = () => {
     try {
       setIsUploading(true);
       // Get file extension
-      const extension =
-        file.uri.split(".").pop() || file.type?.split("/")[1] || "jpeg";
+      const extension = file.uri.split(".").pop() || file.type?.split("/")[1] || "jpeg";
       const fileKey = `${folder}/${Date.now()}_${Math.floor(
         Math.random() * 10000000
       )}.${extension}`;
