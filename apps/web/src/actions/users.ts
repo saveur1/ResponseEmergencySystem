@@ -40,3 +40,24 @@ export const signupUser = async (user: UserShape, password: string) => {
         createdAt,
     };
 };
+
+export const getAllUsers = async () => {
+  try {
+    const usersRef = collection(db, 'users')
+    const querySnapshot = await getDocs(usersRef)
+
+    if (!querySnapshot.empty) {
+      const users = querySnapshot.docs.map((doc) => {
+        return doc.data() as UserShape
+      })
+      console.log('All users retrieved:', users)
+      return users
+    } else {
+      console.log('No users found in the database.')
+      return []
+    }
+  } catch (error) {
+    console.error('Error retrieving all users:', error)
+    return []
+  }
+}
