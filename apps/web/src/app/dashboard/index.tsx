@@ -7,12 +7,34 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList } from '@/components/ui/tabs';
 import { StatCard } from '@/components/dashboard/StatisticsCards'
-import { DashboardCards } from '@/components/dashboard/dashboard-cards';
+import { useEffect, useState } from 'react';
+import { generateEmergencyStatistics } from '@/actions/emergency';
+import { tEmergency } from '@/types';
 
+interface StatisticsTypes {
+    totalEmergencies: number,
+    percentageEmergenciesIncreaseFromLastMonth: number,
+    totalFireEmergencies: number,
+    totalFireEmergenciesFromLast24Hours: number,
+    totalAssaultEmergencies: number,
+    totalAssaultEmergenciesFromLast24Hours: number,
+    totalFloodEmergenciesIncidents: number,
+    totalFloodEmergenciesFromLast24Hours: number,
+    lastThreeEmergencies: tEmergency[],
+}
 
 export default function Dashboard() {
+    const [stastics, setStatistics] = useState<StatisticsTypes>();
+    useEffect(()=> {
+        const fetchStatistics = async()=> {
+            const statistics = await generateEmergencyStatistics();
+            setStatistics(statistics);
+        }
+
+        fetchStatistics()
+    }, [])
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -33,30 +55,30 @@ export default function Dashboard() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 title="Total Emergencies"
-                value="256"
+                value={ stastics?.totalEmergencies || 0 }
                 icon={Activity}
-                description="12% increase from last month"
+                description={`${Math.round(stastics?.percentageEmergenciesIncreaseFromLastMonth || 0)}% increase from last month`}
               />
               <StatCard
                 title="Fire Emergencies"
-                value="64"
+                value={ stastics?.totalFireEmergencies || 0 }
                 icon={Flame}
                 variant="fire"
-                description="8 new in the last 24 hours"
+                description={`${ stastics?.totalFireEmergenciesFromLast24Hours} new in the last 24 hours`}
               />
               <StatCard
                 title="Assault Reports"
-                value="89"
+                value={ stastics?.totalAssaultEmergencies || 0 }
                 icon={Shield}
                 variant="assault"
-                description="5 new in the last 24 hours"
+                description={`${ stastics?.totalAssaultEmergenciesFromLast24Hours } new in the last 24 hours`}
               />
               <StatCard
                 title="Flood Incidents"
-                value="42"
+                value={ stastics?.totalFloodEmergenciesIncidents || 0}
                 icon={LifeBuoy}
                 variant="flood"
-                description="2 new in the last 24 hours"
+                description={`${ stastics?.totalFloodEmergenciesFromLast24Hours } new in the last 24 hours`}
               />
             </div>
 

@@ -1,6 +1,5 @@
-import { getDocs, collection, where, setDoc, doc, query } from "firebase/firestore";
-import { auth, db } from "../utils/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { getDocs, collection, where, setDoc, doc, query, getDoc } from "firebase/firestore";
+import { db } from "../utils/firebase";
 import { UserShape } from "types";
 
 export const getUserDetails = async (email: string) => {
@@ -22,23 +21,22 @@ export const getUserDetails = async (email: string) => {
     }
 };
 
-export const signupUser = async (user: UserShape, password: string) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, user.email, password);
+export const getUserDetailsById = async (id: string) => {
+    try {
+        const userDocRef = doc(db, "users", id);
+        const userDoc = await getDoc(userDocRef);
 
-    const userId = userCredential.user.uid;
-    const createdAt = new Date();
-
-    await setDoc(doc(db, "users", userId), {
-        ...user,
-        id: userId,
-        createdAt,
-    });
-
-    return {
-        ...user,
-        id: userId,
-        createdAt,
-    };
+        if (userDoc.exists()) {
+            const userDetails = userDoc.data() as unknown as UserShape;
+            return userDetails;
+        } else {
+            console.log("No user found with the provided ID.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error retrieving user details by ID:", error);
+        return null;
+    }
 };
 
 export const getAllUsers = async () => {
