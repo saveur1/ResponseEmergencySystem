@@ -5,8 +5,18 @@ import { useNavigation } from '@react-navigation/native';
 import EmergencyCard from '../components/EmergencyCard';
 import TabSelector from '../components/TabSelection';
 import { Emergency } from '@/types';
-import { collection, orderBy, where, query, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  orderBy,
+  where,
+  query,
+  getDocs,
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
 import { db } from '@/utils/firebase';
+import { getItemAsync } from 'expo-secure-store';
+import { router } from 'expo-router';
 
 const SOS = () => {
   const navigation = useNavigation();
@@ -16,26 +26,34 @@ const SOS = () => {
 
   React.useEffect(() => {
     const fetchEmergencies = async () => {
+      const currentUserId = await getItemAsync('userId');
       try {
-        let emergenciesQuery = query(
-          collection(db, 'emergencies'),
-          orderBy('timestamp', 'desc')
-        );
-        // if (activeTab === "reported-by-you" && currentUser) {
-        //   emergenciesQuery = query(
-        //     collection(db, "emergencies"),
-        //     where("userId", "==", currentUser.uid),
-        //     orderBy("timestamp", "desc")
-        //   );
-        // } else {
-        // Keep the existing query
-        // }
+        let emergenciesQuery;
+
+        if (activeTab === 'reported-by-you') {
+          emergenciesQuery = query(
+            collection(db, 'emergencies'),
+            where('reportedBy', '==', currentUserId),
+            orderBy('timestamp', 'desc')
+          );
+        } else {
+          emergenciesQuery = query(
+            collection(db, 'emergencies'),
+            orderBy('timestamp', 'desc')
+          );
+        }
 
         const querySnapshot = await getDocs(emergenciesQuery);
         const emergenciesData: Emergency[] = [];
 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+
+          if (activeTab === 'reported-by-others') {
+            if (data.reportedBy === currentUserId) return;
+            if (data.status === 'cancelled') return;
+          }
+
           emergenciesData.push({
             id: doc.id,
             type: data.type,
@@ -47,6 +65,7 @@ const SOS = () => {
             timestamp: data.timestamp,
             status: data.status,
             images: data.images || [],
+            reportedBy: data.reportedBy,
           });
         });
 
@@ -58,6 +77,24 @@ const SOS = () => {
 
     fetchEmergencies();
   }, [activeTab]);
+
+  const HandleUpdate = async (emergencyId: string) => {
+    try {
+      const emergencyRef = doc(db, 'emergencies', emergencyId);
+      await updateDoc(emergencyRef, {
+        status: 'cancelled',
+      });
+      setEmergencies((prevEmergencies) =>
+        prevEmergencies.map((emergency) =>
+          emergency.id === emergencyId
+            ? { ...emergency, status: 'cancelled' }
+            : emergency
+        )
+      );
+    } catch (error) {
+      console.error('Error updating emergency:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -75,21 +112,30 @@ const SOS = () => {
         onTabChange={setActiveTab}
       />
 
-      <FlatList
-        data={emergencies}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <EmergencyCard
-            emergency={item}
-            // onPress={() => navigation.navigate('ViewEmergency', { emergency: item })}
-            onDelete={() => {
-              /* Handle delete */
-            }}
-            // showDeleteButton={activeTab === 'reported-by-you'}
-          />
-        )}
-        contentContainerStyle={styles.list}
-      />
+      {emergencies.length === 0 && activeTab === 'reported-by-you' ? (
+        <Text style={styles.emptyText}>You didn’t report any emergency.</Text>
+      ) : (
+        <FlatList
+          data={emergencies}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <EmergencyCard
+              emergency={item}
+              onPress={() =>
+                router.navigate({
+                  pathname: '/ViewEmergency',
+                  params: { emergencyId: item.id },
+                })
+              }
+              onDelete={() => {
+                HandleUpdate(item.id);
+              }}
+              showDeleteButton={activeTab === 'reported-by-you'}
+            />
+          )}
+          contentContainerStyle={styles.list}
+        />
+      )}
     </View>
   );
 };
@@ -109,6 +155,12 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 32,
+    fontSize: 16,
+    color: '#888',
   },
 });
 
