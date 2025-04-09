@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,37 +6,92 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
-import {
-  useRoute,
-  useNavigation,
-  type RouteProp,
-} from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { doc, getDoc } from 'firebase/firestore';
 
 import EmergencyIcon from './components/EmergencyIcon';
 import LocationBadge from './components/LocationBadge';
+import { db } from '@/utils/firebase';
 import type { Emergency } from '../types';
 
-type ViewEmergencyScreenProps = {};
 type RouteParams = {
-  params: {
-    emergency: Emergency;
-  };
+  emergencyId: string;
 };
 
-const ViewEmergencyScreen: React.FC<ViewEmergencyScreenProps> = () => {
-  const route = useRoute<RouteProp<RouteParams, 'params'>>();
+const ViewEmergencyScreen: React.FC = () => {
+  const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>();
   const navigation = useNavigation();
-  const { emergency } = route.params;
+  const { emergencyId } = route.params;
+
+  const [emergency, setEmergency] = useState<Emergency | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEmergency = async () => {
+      try {
+        const docRef = doc(db, 'emergencies', emergencyId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setEmergency({
+            id: docSnap.id,
+            type: data.type,
+            location:
+              data.location?.address ||
+              `${data.location?.latitude}, ${data.location?.longitude}`,
+            description: data.description,
+            timestamp: data.timestamp,
+            status: data.status,
+            images: data.images || [],
+            reportedBy: data.reportedBy,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching emergency:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmergency();
+  }, [emergencyId]);
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
+
+  if (!emergency) {
+    return (
+      <View style={styles.loader}>
+        <Text>Emergency not found.</Text>
+      </View>
+    );
+  }
 
   const emergencyTips = [
-    'Stay Calm & Check for injuries – Assess yourself and passengers for injuries.',
-    'Move to Safety (if Possible) – If the vehicle is drivable, move it to the side of the road. If not, turn on hazard lights.',
-    'Call Emergency Services – Dial 112 for medical and police assistance.',
-    'Do Not Leave the Scene – Stay until authorities arrive unless medical attention is needed.',
-    'Exchange Information – Share contact and insurance details with other involved parties.',
+    'Stay Calm & Check for injuries - Assess yourself and passengers for injuries.',
+    'Move to Safety (if Possible) - If the vehicle is drivable, move it to the side of the road. If not, turn on hazard lights.',
+    'Call Emergency Services - Dial 112 for medical and police assistance.',
+    'Do Not Leave the Scene - Stay until authorities arrive unless medical attention is needed.',
+    'Exchange Information - Share contact and insurance details with other involved parties.',
   ];
+
+  const locationValue =
+    typeof emergency.location === 'string'
+      ? emergency.location
+      : emergency.location
+      ? `${emergency.location.latitude.toFixed(
+          4
+        )}, ${emergency.location.longitude.toFixed(4)}`
+      : 'Unknown location';
 
   return (
     <ScrollView style={styles.container}>
@@ -47,14 +102,13 @@ const ViewEmergencyScreen: React.FC<ViewEmergencyScreenProps> = () => {
         >
           <Ionicons name="arrow-back" size={24} color="#000000" />
         </TouchableOpacity>
-        <Text style={styles.title}>{emergency.type}</Text>
       </View>
 
       <View style={styles.iconContainer}>
-        {/* <EmergencyIcon type={emergency.icon} size={60} /> */}
+        <MaterialIcons name="emergency" size={40} color="#FF3B30" />
       </View>
 
-      {/* <LocationBadge location={emergency.location} /> */}
+      <LocationBadge location={locationValue} />
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Description</Text>
@@ -64,24 +118,10 @@ const ViewEmergencyScreen: React.FC<ViewEmergencyScreenProps> = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Images/Videos</Text>
         <View style={styles.imagesContainer}>
-          <Image
-            source={{ uri: '/placeholder.svg?height=80&width=80' }}
-            style={styles.thumbnail}
-          />
-          <Image
-            source={{ uri: '/placeholder.svg?height=80&width=80' }}
-            style={styles.thumbnail}
-          />
-          <Image
-            source={{ uri: '/placeholder.svg?height=80&width=80' }}
-            style={styles.thumbnail}
-          />
+          {emergency.images?.map((uri, index) => (
+            <Image key={index} source={{ uri }} style={styles.thumbnail} />
+          ))}
         </View>
-
-        <TouchableOpacity style={styles.audioButton}>
-          <Ionicons name="play" size={16} color="#000000" />
-          <Text style={styles.audioText}>recorded audio</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.tipsContainer}>
@@ -112,23 +152,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 12,
   },
   backButton: {
     marginRight: 16,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000000',
+    marginTop: 16,
   },
   iconContainer: {
     alignItems: 'center',
-    marginVertical: 16,
+    paddingBottom: 10,
   },
   section: {
     padding: 16,
@@ -146,22 +187,14 @@ const styles = StyleSheet.create({
   },
   imagesContainer: {
     flexDirection: 'row',
-    marginVertical: 8,
+    flexWrap: 'wrap',
+    gap: 8,
   },
   thumbnail: {
     width: 80,
     height: 80,
     borderRadius: 4,
     marginRight: 8,
-  },
-  audioButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  audioText: {
-    marginLeft: 8,
-    color: '#333333',
   },
   tipsContainer: {
     padding: 16,

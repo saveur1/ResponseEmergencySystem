@@ -1,4 +1,4 @@
-export type tEmergency = {
+export type Emergency = {
   id: string;
   type: string;
   location?:
@@ -12,6 +12,7 @@ export type tEmergency = {
   status: string;
   images?: string[];
   videos?: string[];
+  reportedBy: string;
 };
 
 export type Notification = {

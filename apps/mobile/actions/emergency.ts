@@ -13,6 +13,7 @@ interface EmergencyProps {
   status: string;
   images: string[];
   videos: string[];
+  reportedBy: string;
 }
 interface CreateEmergencyProps {
   type: string;
@@ -25,6 +26,7 @@ interface CreateEmergencyProps {
   status: string;
   images: string[];
   videos: string[];
+  reportedBy: string;
 }
 export const useCreateEmergency = () => {
   const createEmergency = async (emergency: EmergencyProps) => {
