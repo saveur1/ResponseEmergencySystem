@@ -1,5 +1,5 @@
 import { db } from "../utils/firebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc } from "firebase/firestore";
 import { tEmergency } from "types";
 
 export const createEmergencyRecord = async (emergency: tEmergency) => {
@@ -82,6 +82,22 @@ export const generateEmergencyStatistics = async()=> {
     };
 }
 
+export const updateEmergencyStatus = async (emergencyId: string, newStatus: string) => {
+    try {
+        const emergencyRef = collection(db, "emergencies");
+        const emergencyDoc = doc(emergencyRef, emergencyId);
+        await updateDoc(emergencyDoc, { status: newStatus });
+
+        const updatedEmergencySnapshot = await getDocs(emergencyRef);
+        const updatedEmergency = updatedEmergencySnapshot.docs
+            .map((doc) => ({ id: doc.id, ...(doc.data()) }))
+            .find((e) => e.id === emergencyId);
+
+        return updatedEmergency as unknown as tEmergency;
+    } catch (error) {
+        console.error("Error updating emergency status:", error);
+    }
+};
 
   // Function to fetch all emergencies
 export const fetchEmergencies = async () => {

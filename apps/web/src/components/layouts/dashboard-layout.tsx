@@ -16,9 +16,9 @@ const AdminLayout = () => {
             </div>
             <div className="flex-1 overflow-hidden">
                 <main className="h-full overflow-y-auto overflow-x-auto bg-gray-50 dark:bg-gray-900">
-                <div className="w-full pb-4">
-                    <Outlet />
-                </div>
+                    <div className="w-full pb-4">
+                        <Outlet />
+                    </div>
                 </main>
             </div>
             </SidebarInset>

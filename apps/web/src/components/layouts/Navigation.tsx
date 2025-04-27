@@ -1,69 +1,51 @@
 import { AuthContext } from "Context/user-context";
 import { useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import UserProfileDropdown from "../dropdowns/user-profile-dropdown";
+import { ChevronDown } from "lucide-react";
 
 function Navigation() {
-  const navigate = useNavigate();
-  const authContext = useContext(AuthContext);
-  
-  if (!authContext) return null;
-  const { user, logout, isLog, setError } = authContext;
-
-  useEffect(() => {
-    setError("");
-
-    if (!isLog)
-        navigate("/login");
+    const navigate = useNavigate();
+    const authContext = useContext(AuthContext);
     
-  }, [navigate]);
-  
-   const handleLogout = async() => {
-    await logout();
-    navigate("/login");
-  };
-  return (
-    <nav className="flex justify-between items-center bg-red-600 text-white px-5 py-2 my-2 mx-2 shadow-md rounded-md">
-      <div className="text-white text-xl font-bold">
-        <Link to="/">Emergency Response System</Link>
-      </div>
+    if (!authContext) return null;
+    const { user, logout, isLog, setError } = authContext;
 
-      <div className="flex items-center gap-5">
-        <Link to="/" className="text-white no-underline cursor-pointer px-3 py-1 rounded hover:bg-white/20 transition">
-          Dashboard
-        </Link>
+    useEffect(() => {
+        setError("");
 
-        <div className="relative cursor-pointer py-2 group">
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 flex justify-center items-center border-2 border-white/50">
-            {user?.profileImageUrl ? (
-              <img src={user.profileImageUrl} alt={user.fullName} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-lg font-bold text-white">
-                {user?.fullName?.charAt(0).toUpperCase() || "U"}
-              </span>
-            )}
-          </div>
+        if (!isLog)
+            navigate("/login");
+        
+    }, [navigate]);
+    
+    return (
+        <nav className="flex justify-between items-center bg-red-600 text-white px-10 sticky top-0 z-50 shadow-md rounded-md">
+            <Link to="/" className="text-white text-xl font-bold">
+                <img src="/web_logo.png" height={ 30 } width={ 300 } alt="Logo" className="h-20 w-52"/>
+            </Link>
 
-          <div className="absolute top-full right-0 w-48 bg-white rounded shadow-md py-2 text-gray-800 hidden group-hover:block z-10">
-            <div className="font-bold px-4">{user?.fullName}</div>
-            <div className="text-sm text-gray-500 px-4 pb-2 capitalize">{user?.role}</div>
-            <div className="h-px bg-gray-200 my-2"></div>
-            <div
-              className="px-4 py-2 hover:bg-gray-100 transition cursor-pointer"
-              onClick={() => navigate("/profile")}
-            >
-              My Profile
+            <div className="flex items-center gap-3 group relative">
+                <div className="relative cursor-pointer h-20 flex flex-col justify-center">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 flex justify-center items-center border-2 border-white/50">
+                        {user?.profileImageUrl ? (
+                            <img src={user.profileImageUrl} alt={user.fullName} className="w-full h-full object-cover" />
+                        ) : 
+                        (<span className="text-lg font-bold text-white">{user?.fullName?.charAt(0).toUpperCase() || "U"}</span>)}
+                    </div>
+                </div>
+                <div className="flex flex-col h-20 justify-center">
+                    <p className="font-bold">{user?.fullName}</p>
+                    <p className="text-sm text-gray-200 pb-2 capitalize">{user?.role}</p>
+                </div>
+                <div className="flex flex-col h-20 justify-center">
+                    <ChevronDown size={18} className="text-white group-hover:-rotate-180 transition-all duration-500"/>
+                </div>
+
+                <UserProfileDropdown user={user } logout = { logout }/>
             </div>
-            <div
-              className="px-4 py-2 hover:bg-gray-100 transition cursor-pointer"
-              onClick={handleLogout}
-            >
-              Logout
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
+        </nav>
+    );
 }
 
 export default Navigation;
