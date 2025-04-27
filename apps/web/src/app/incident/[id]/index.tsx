@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchEmergencies } from "actions/emergency";
+import { fetchEmergencies, updateEmergencyStatus } from "actions/emergency";
+import { tEmergency } from "@/types";
 
 function IncidentDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [incident, setIncident] = useState(null);
-    const [statusUpdate, setStatusUpdate] = useState("");
+    const [incident, setIncident] = useState<tEmergency>();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -39,6 +39,20 @@ function IncidentDetails() {
         }
     };
 
+    const handleStatusChange = async (status: string) => {
+        if (!incident) return;
+
+        try {
+            setLoading(true);
+            const updatedIncident = await updateEmergencyStatus(incident?.id, status);
+            setIncident(updatedIncident);
+        } catch (error) {
+            alert("Failed to update status. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
             <button 
@@ -50,7 +64,7 @@ function IncidentDetails() {
 
             <div className="border-b pb-4 mb-4">
                 <h2 className="text-2xl font-bold">{incident.type} Emergency - {incident.priority} Priority</h2>
-                <span className={`px-3 py-1 rounded-full text-white text-sm font-medium bg-${incident.status === "Resolved" ? "green" : "red"}-500`}>
+                <span className={`px-3 py-1 rounded-full text-white text-sm font-medium bg-${incident.status === "resolved" ? "green" : "red"}-500`}>
                     {incident.status}
                 </span>
             </div>
@@ -75,32 +89,52 @@ function IncidentDetails() {
             <div className="mt-6">
                 <h3 className="text-lg font-semibold">Update Status</h3>
                 <div className="flex gap-2 mt-2">
-                    {["Acknowledged", "Dispatched", "En Route", "On Scene", "Resolved"].map((status) => (
+                    {["pending", "dispatched", "in-progress", "resolved", "cancelled"].map((status) => (
                         <button 
                             key={status} 
-                            className={`px-4 py-2 rounded-md text-white ${incident.status === status ? "bg-blue-600" : "bg-gray-400 hover:bg-gray-500"}`}
+                            className={`px-4 py-2 capitalize rounded-md text-white ${incident.status === status ? "bg-blue-600" : "bg-gray-400 hover:bg-gray-500"}`}
                             onClick={() => handleStatusChange(status)}
                         >
-                            {status}
+                            { status?.split("-").join(" ") }
                         </button>
                     ))}
                 </div>
             </div>
 
-            <div className="mt-6">
-                <h3 className="text-lg font-semibold">Add Status Update</h3>
-                <textarea 
-                    className="w-full mt-2 p-2 border rounded-md" 
-                    value={statusUpdate} 
-                    onChange={(e) => setStatusUpdate(e.target.value)}
-                    placeholder="Enter status update"
-                ></textarea>
-                <button 
-                    className="w-full mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                    Update Status
-                </button>
-            </div>
+            {incident?.images && incident.images.length > 0 && (
+                <div className="mt-6">
+                    <h3 className="text-lg font-semibold">Incident Images</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+                        {incident.images.map((image, index) => (
+                            <img 
+                                key={index} 
+                                src={image} 
+                                alt={`Incident Image ${index + 1}`} 
+                                className="w-full h-32 object-cover rounded-md shadow-md"
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {incident?.videos && incident.videos.length > 0 && (
+                <div className="mt-6">
+                    <h3 className="text-lg font-semibold">Incident Videos</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+                        {incident.videos.map((video, index) => (
+                            <div key={index} className="relative">
+                                <video
+                                    src={video}
+                                    controls
+                                    className="w-full h-32 object-cover rounded-md shadow-md"
+                                >
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
