@@ -76,7 +76,7 @@ function Login() {
           </button>
         </form>
         <div className="text-center mt-4 text-gray-600">
-          Don't have an account? <Link to="/signup" className="text-red-500 hover:underline">Sign Up</Link>
+          Forgot password? <Link to="/forgot-password" className="text-red-500 hover:underline">reset now</Link>
         </div>
       </div>
     </div>

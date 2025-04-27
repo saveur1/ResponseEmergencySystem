@@ -1,6 +1,7 @@
 import React, { useState, createContext, ReactNode, Dispatch, useEffect } from "react";
 import {
     createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
     signInWithEmailAndPassword,
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
@@ -13,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 interface AuthContextType {
     register: (user: UserShape, password: string) => Promise<boolean>;
     login: (email: string, password: string) => Promise<boolean>;
+    forgotPassword: (email: string) => Promise<void>;
     logout: () => Promise<void>;
     error: string;
     isLog: boolean;
@@ -139,6 +141,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                         handleFirebaseError(error as FirebaseError)
                         return false;
                     
+                    } finally {
+                        setIsLoading(false);
+                    }
+                },
+
+                forgotPassword: async (email) => {
+                    try {
+                        setIsLoading(true);
+                        await sendPasswordResetEmail(auth, email);
+                        setError("Check your email for password reset link");
+                    } catch (error) {
+                        handleFirebaseError(error as FirebaseError);
                     } finally {
                         setIsLoading(false);
                     }
