@@ -6,28 +6,29 @@ import React, {
   useEffect
 } from 'react'
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged
-} from 'firebase/auth'
-import { setDoc, doc } from 'firebase/firestore'
-import { db, auth } from '../utils/firebase'
-import { UserShape } from 'types'
-import { getUserDetails, getUserDetailsById } from 'actions/users'
-import { FirebaseError } from 'firebase/app'
-import { useNavigate } from 'react-router-dom'
+    createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signInWithEmailAndPassword,
+} from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
+import { db, auth } from "../utils/firebase";
+import { UserShape } from "types";
+import { getUserDetails, getUserDetailsById } from "actions/users";
+import { FirebaseError } from "firebase/app";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
-  register: (user: UserShape, password: string) => Promise<boolean>
-  login: (email: string, password: string) => Promise<boolean>
-  logout: () => Promise<void>
-  error: string
-  isLog: boolean
-  user: UserShape | undefined
-  setError: Dispatch<React.SetStateAction<string>>
-  isLoading: boolean
-  setUser: Dispatch<React.SetStateAction<UserShape | undefined>>
-  isLoginLoading: boolean
+    register: (user: UserShape, password: string) => Promise<boolean>;
+    login: (email: string, password: string) => Promise<boolean>;
+    forgotPassword: (email: string) => Promise<void>;
+    logout: () => Promise<void>;
+    error: string;
+    isLog: boolean;
+    user: UserShape | undefined;
+    setError: Dispatch<React.SetStateAction<string>>;
+    isLoading: boolean;
+    setUser: Dispatch<React.SetStateAction<UserShape | undefined>>
+    isLoginLoading: boolean
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -179,14 +180,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
             handleCheckRoleAndRedirect(storedUser)
 
-            return true
-          } catch (error) {
-            handleFirebaseError(error as FirebaseError)
-            return false
-          } finally {
-            setIsLoading(false)
-          }
-        },
+                        return true;
+                    } catch (error) {
+                        handleFirebaseError(error as FirebaseError)
+                        return false;
+                    
+                    } finally {
+                        setIsLoading(false);
+                    }
+                },
+
+                forgotPassword: async (email) => {
+                    try {
+                        setIsLoading(true);
+                        await sendPasswordResetEmail(auth, email);
+                        setError("Check your email for password reset link");
+                    } catch (error) {
+                        handleFirebaseError(error as FirebaseError);
+                    } finally {
+                        setIsLoading(false);
+                    }
+                },
 
         logout: async () => {
           clearState()
