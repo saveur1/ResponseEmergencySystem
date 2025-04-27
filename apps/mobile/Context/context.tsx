@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserData = async (userId: string) => {
     try {
-      const userDocRef = doc(db, 'user', userId);
+      const userDocRef = doc(db, 'users', userId);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
@@ -119,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const userId = await getItemAsync('userId');
       if (!userId) return false;
 
-      const userDocRef = doc(db, 'user', userId);
+      const userDocRef = doc(db, 'users', userId);
       await updateDoc(userDocRef, newUserData);
 
       if (userData) {
@@ -156,7 +156,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 'https://www.pikpng.com/pngl/m/80-805068_my-profile-icon-blank-profile-picture-circle-clipart.png',
             };
 
-            await setDoc(doc(db, 'user', user.uid), userData);
+            await setDoc(doc(db, 'users', user.uid), userData);
 
             setUser(user);
             setUserData(userData);
