@@ -11,7 +11,10 @@ export type tEmergency = {
     status: "pending" | "dispatched" | "in-progress" | "resolved" | "cancelled";
     images?: string[];
     videos?: string[];
+    audio?: string;
     priority?: string;
+    reportedBy: string;
+    dispatcher?: string;
 };
 
 export type Notification = {

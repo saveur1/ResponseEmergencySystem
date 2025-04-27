@@ -5,7 +5,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from 'utils/firebase';
 import { AuthContext } from 'Context/user-context';
 
-const UpdateProfileCard = () => {
+const UpdateProfileCard = ({ navigateUrl = "/profile" }) => {
     const authContext = useContext(AuthContext);
     if (!authContext) return null;
 
@@ -71,7 +71,7 @@ const UpdateProfileCard = () => {
                         profileImageUrl: avatarUrl,
                     } as UserShape);
 
-                    navigate('/profile');
+                    navigate(navigateUrl);
                 } catch (error) {
                     console.error('Error updating profile:', error);
                     setError('Failed to update profile. Please try again.');

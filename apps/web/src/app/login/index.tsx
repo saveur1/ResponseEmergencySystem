@@ -1,24 +1,19 @@
 import { FormEvent, useContext, useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AuthContext } from "Context/user-context";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
   const authContext = useContext(AuthContext);
 
   if(!authContext) return null;
-  const { setError, login, isLoading, error, isLog } = authContext;
+  const { setError, login, isLoading, error } = authContext;
 
   useEffect(() => {
     setError("");
-
-    if(isLog)
-        navigate("/");
-
-  }, [setError, isLog, navigate]);
+  }, [setError]);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
