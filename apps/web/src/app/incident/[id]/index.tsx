@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { fetchEmergencies, updateEmergencyStatus } from "actions/emergency";
 import { tEmergency, UserShape } from "@/types";
 import { getUserDetailsById } from "@/actions/users";
-import { AssignDispatcherModol } from "@/components/modals/assign-dispatcher";
+import { ReporterDetailsModal } from "@/components/modals/reporter-details-modal";
 
 function IncidentDetails() {
     const { id } = useParams();
@@ -25,7 +25,12 @@ function IncidentDetails() {
                 setLoading(false);
             }
         };
+    
+        fetchIncident();
+        
+    }, [id]);
 
+    useEffect(()=> {
         const fetchReportedBy = async () => {
             if (incident) {
                 try {
@@ -37,9 +42,8 @@ function IncidentDetails() {
             }
         }
 
-        fetchIncident();
         fetchReportedBy();
-    }, [id]);
+    }, [incident?.reportedBy])
 
     if (loading) return <div className="text-center text-lg font-semibold">Loading...</div>;
     if (!incident) return <div className="text-center text-red-600">Incident not found</div>;
@@ -86,8 +90,8 @@ function IncidentDetails() {
                         </span>
                     </div>
                 </div>
-                <AssignDispatcherModol>
-                    <div className="flex items-center gap-4">
+                <ReporterDetailsModal reportedBy={ reportedBy }>
+                    <div className="flex items-center gap-4 cursor-pointer">
                         <img 
                             src={reportedBy?.profileImageUrl || "/avatar.png"} 
                             alt={reportedBy?.fullName || "Unknown User"} 
@@ -98,7 +102,7 @@ function IncidentDetails() {
                             <p className="text-gray-500 text-sm">Reported By</p>
                         </div>
                     </div>
-                </AssignDispatcherModol>
+                </ReporterDetailsModal>
             </div>
 
             <div className="space-y-4">
@@ -122,13 +126,13 @@ function IncidentDetails() {
                 <h3 className="text-lg font-semibold">Update Status</h3>
                 <div className="flex gap-2 mt-2">
                     {["pending", "dispatched", "in-progress", "resolved", "cancelled"].map((status) => (
-                    <button 
-                        key={status} 
-                        className={`px-4 py-2 capitalize rounded-md text-white ${incident.status === status ? "bg-blue-600" : "bg-gray-400 hover:bg-gray-500"}`}
-                        onClick={() => handleStatusChange(status)}
-                    >
-                        { status?.split("-").join(" ") }
-                    </button>
+                        <button 
+                            key={status} 
+                            className={`px-4 py-2 capitalize rounded-md text-white ${incident.status === status ? "bg-blue-600" : "bg-gray-400 hover:bg-gray-500"}`}
+                            onClick={() => handleStatusChange(status)}
+                        >
+                            { status?.split("-").join(" ") }
+                        </button>
                     ))}
                 </div>
             </div>

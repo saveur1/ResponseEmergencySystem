@@ -14,7 +14,6 @@ function Dashboard() {
             dispatched: 0,
     });
 
-
     useEffect(() => {
         const handleFetchIncidents = async () => {
             const emergencies: tEmergency[] = await fetchEmergencies();
