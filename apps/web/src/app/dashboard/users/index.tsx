@@ -7,7 +7,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import {
@@ -21,30 +20,43 @@ import {
 import { Input } from '@/components/ui/input'
 import { MoreHorizontal, Plus, Search } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { getAllUsers } from '@/actions/users'
+import { getAllUsers, deleteUser } from '@/actions/users'
 import { UserShape } from 'types'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import { toast } from 'sonner'
 
 export default function UsersPage() {
   const [users, setUsers] = useState<UserShape[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [userToDelete, setUserToDelete] = useState<UserShape | null>(null)
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true)
+      const usersData = await getAllUsers()
+      setUsers(usersData)
+      setError(null)
+    } catch (err) {
+      console.error('Error fetching users:', err)
+      setError('Failed to load users. Please try again later.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true)
-        const usersData = await getAllUsers()
-        setUsers(usersData)
-        setError(null)
-      } catch (err) {
-        console.error('Error fetching users:', err)
-        setError('Failed to load users. Please try again later.')
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchUsers()
   }, [])
 
@@ -61,6 +73,37 @@ export default function UsersPage() {
     // The filtering is already handled by the above filter function
   }
 
+  const handleConfirmDelete = async () => {
+    if (!userToDelete || !userToDelete.id) {
+      toast(
+      'Cannot delete user: Missing user ID'
+      )
+      return
+    }
+
+    try {
+      const success = await deleteUser(userToDelete.id)
+      if (success) {
+        // Remove the user from local state
+        setUsers((prevUsers) =>
+          prevUsers.filter((user) => user.id !== userToDelete.id)
+        )
+        toast(`${userToDelete.fullName} has been deleted successfully.`
+        )
+      } else {
+        toast(
+          'Failed to delete user. Please try again.'
+        )
+      }
+    } catch (err) {
+      console.error('Error deleting user:', err)
+      toast('An unexpected error occurred while deleting the user.'
+      )
+    } finally {
+      setUserToDelete(null)
+    }
+  }
+
   return (
     <div className="p-6">
       <div className="flex items-center justify-between">
@@ -73,7 +116,7 @@ export default function UsersPage() {
         </Link>
       </div>
 
-      <form onSubmit={handleSearch} className="flex items-center  gap-2 my-5">
+      <form onSubmit={handleSearch} className="flex items-center gap-2 my-5">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
           <Input
@@ -151,13 +194,42 @@ export default function UsersPage() {
                           className="bg-white rounded-[5px]"
                         >
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>View details</DropdownMenuItem>
-                          <DropdownMenuItem>Edit user</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
-                            Delete user
-                          </DropdownMenuItem>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem
+                                className="text-red-600 cursor-pointer"
+                                onSelect={(e) => {
+                                  e.preventDefault()
+                                  setUserToDelete(user)
+                                }}
+                              >
+                                Delete user
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="bg-white">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete {userToDelete?.fullName}'s
+                                  account and remove their data from our
+                                  servers.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={handleConfirmDelete}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

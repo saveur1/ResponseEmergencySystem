@@ -1,4 +1,4 @@
-import { getDocs, collection, where, setDoc, doc, query, getDoc } from "firebase/firestore";
+import { getDocs, collection, where, setDoc, doc, query, getDoc, deleteDoc  } from "firebase/firestore";
 import { db } from "../utils/firebase";
 import { UserShape } from "types";
 
@@ -57,5 +57,17 @@ export const getAllUsers = async () => {
   } catch (error) {
     console.error('Error retrieving all users:', error)
     return []
+  }
+}
+
+export const deleteUser = async (userId: string) => {
+  try {
+    const userDocRef = doc(db, 'users', userId)
+    await deleteDoc(userDocRef)
+    console.log(`User with ID ${userId} has been deleted`)
+    return true
+  } catch (error) {
+    console.error('Error deleting user:', error)
+    return false
   }
 }

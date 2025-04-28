@@ -1,5 +1,5 @@
 import { db } from "../utils/firebase";
-import { collection, addDoc, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { tEmergency } from "types";
 
 export const createEmergencyRecord = async (emergency: tEmergency) => {
@@ -116,5 +116,17 @@ export const fetchEmergencies = async () => {
       return [];
     }
   };
+
+export const deleteEmergence = async (EmeId: string) => {
+      try {
+        const EmeDocRef = doc(db, 'emergencies', EmeId)
+        await deleteDoc(EmeDocRef)
+        console.log(`Emergence with ID ${EmeId} has been deleted`)
+        return true
+      } catch (error) {
+        console.error('Error deleting emergence:', error)
+        return false
+      }
+}
 
   

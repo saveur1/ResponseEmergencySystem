@@ -1,13 +1,44 @@
 import { useEffect, useState } from 'react'
 import { Filter, MapPin, MoreHorizontal, Search } from 'lucide-react'
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger
+} from '@/components/ui/select'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { fetchEmergencies } from '@/actions/emergency'
+import { fetchEmergencies, deleteEmergence } from '@/actions/emergency'
 import { tEmergency } from '@/types'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import { toast } from 'sonner'
 
 interface EmergencyDisplay {
   id: string
@@ -44,45 +75,82 @@ const EmergenciesTable = () => {
   const [emergencies, setEmergencies] = useState<EmergencyDisplay[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [emergencyToDelete, setEmergencyToDelete] =
+    useState<EmergencyDisplay | null>(null)
+
+  const getEmergencies = async () => {
+    try {
+      setLoading(true)
+      const data = await fetchEmergencies()
+
+      const formattedEmergencies: EmergencyDisplay[] = data.map(
+        (emergency: tEmergency) => {
+          return {
+            id: emergency.id || 'Unknown ID',
+            type: emergency.type || 'Unknown',
+            location:
+              typeof emergency.location === 'object' &&
+              emergency.location !== null
+                ? `${emergency.location.latitude.toFixed(
+                    4
+                  )}, ${emergency.location.longitude.toFixed(4)}`
+                : 'Unknown location',
+            status: emergency.status || 'pending',
+            time: formatRelativeTime(emergency.timestamp),
+            description: emergency.description || 'No description provided',
+            hasMedia: (emergency.images?.length ?? 0) > 0,
+            hasImages: (emergency.images?.length ?? 0) > 0,
+            hasVideo: (emergency.videos?.length ?? 0) > 0,
+            hasAudio: false
+          }
+        }
+      )
+
+      setEmergencies(formattedEmergencies)
+      setError(null)
+    } catch (err) {
+      console.error('Error fetching emergencies:', err)
+      setError('Failed to load emergencies. Please try again later.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const getEmergencies = async () => {
-      try {
-        setLoading(true)
-        const data = await fetchEmergencies()
-
-        const formattedEmergencies: EmergencyDisplay[] = data.map(
-          (emergency: tEmergency) => {
-            return {
-              id: emergency.id || 'Unknown ID',
-              type: emergency.type || 'Unknown',
-              location: typeof emergency.location === 'object' && emergency.location !== null
-                ? `${emergency.location.latitude.toFixed(4)}, ${emergency.location.longitude.toFixed(4)}`
-                : 'Unknown location',
-              status: emergency.status || 'pending',
-              time: formatRelativeTime(emergency.timestamp),
-              description: emergency.description || 'No description provided',
-              hasMedia:
-                (emergency.images?.length ?? 0) > 0 ,
-              hasImages: (emergency.images?.length ?? 0) > 0,
-              hasVideo: (emergency.videos?.length ?? 0) > 0,
-              hasAudio: false 
-            }
-          }
-        )
-
-        setEmergencies(formattedEmergencies)
-        setError(null)
-      } catch (err) {
-        console.error('Error fetching emergencies:', err)
-        setError('Failed to load emergencies. Please try again later.')
-      } finally {
-        setLoading(false)
-      }
-    }
-
     getEmergencies()
   }, [])
+
+  const handleConfirmDelete = async () => {
+    if (!emergencyToDelete || !emergencyToDelete.id) {
+      toast('Cannot delete emergency: Missing emergency ID'
+      )
+      return
+    }
+
+    try {
+      const success = await deleteEmergence(emergencyToDelete.id)
+      if (success) {
+        // Remove the emergency from local state
+        setEmergencies((prevEmergencies) =>
+          prevEmergencies.filter(
+            (emergency) => emergency.id !== emergencyToDelete.id
+          )
+        )
+        toast(`Emergency of type "${emergencyToDelete.type}" has been deleted successfully.`
+        )
+      } else {
+        toast('Failed to delete emergency. Please try again.'
+        )
+      }
+    } catch (err) {
+      console.error('Error deleting emergency:', err)
+      toast(
+          'An unexpected error occurred while deleting the emergency.'
+      )
+    } finally {
+      setEmergencyToDelete(null)
+    }
+  }
 
   const filteredEmergencies = emergencies.filter((emergency) => {
     const matchesSearch =
@@ -131,7 +199,7 @@ const EmergenciesTable = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
-              {uniqueEmergencyTypes.map((status) => (
+              {uniqueStatusTypes.map((status) => (
                 <SelectItem key={status} value={status}>
                   {status}
                 </SelectItem>
@@ -147,7 +215,7 @@ const EmergenciesTable = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
-              {uniqueStatusTypes.map((type) => (
+              {uniqueEmergencyTypes.map((type) => (
                 <SelectItem key={type} value={type}>
                   {type}
                 </SelectItem>
@@ -177,7 +245,7 @@ const EmergenciesTable = () => {
             <TableBody>
               {filteredEmergencies.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4">
+                  <TableCell colSpan={7} className="text-center py-4">
                     No emergencies found matching your filters.
                   </TableCell>
                 </TableRow>
@@ -185,12 +253,10 @@ const EmergenciesTable = () => {
                 filteredEmergencies.map((emergency, index) => (
                   <TableRow key={emergency.id}>
                     <TableCell>
-                      <div className="text-sm">{index+1}</div>
+                      <div className="text-sm">{index + 1}</div>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm text-black">
-                        {emergency.type}
-                      </div>
+                      <div className="text-sm text-black">{emergency.type}</div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
@@ -251,12 +317,47 @@ const EmergenciesTable = () => {
                             <span className="sr-only">Open menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className='bg-white rounded-[5px]'>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-white rounded-[5px]"
+                        >
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>View details</DropdownMenuItem>
-                          <DropdownMenuItem>Assign responders</DropdownMenuItem>
-                          <DropdownMenuItem>Update status</DropdownMenuItem>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem
+                                className="text-red-600 cursor-pointer"
+                                onSelect={(e) => {
+                                  e.preventDefault()
+                                  setEmergencyToDelete(emergency)
+                                }}
+                              >
+                                Delete
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className='bg-white'>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete this emergency report
+                                  (type: {emergencyToDelete?.type}) and remove
+                                  all related data from our servers.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={handleConfirmDelete}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
