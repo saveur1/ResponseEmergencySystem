@@ -14,6 +14,9 @@ interface EmergencyProps {
   images: string[];
   videos: string[];
   reportedBy: string;
+  assignedTo?: string;
+  audio?: string; // Optional audio field
+  priority?: string; // Optional priority field
 }
 interface CreateEmergencyProps {
   type: string;
@@ -27,10 +30,56 @@ interface CreateEmergencyProps {
   images: string[];
   videos: string[];
   reportedBy: string;
+  assignedTo?: string;
 }
 export const useCreateEmergency = () => {
   const createEmergency = async (emergency: EmergencyProps) => {
     try {
+      // Fetch users with the role "reporter"
+      const usersRef = collection(db, "users");
+      const usersSnapshot = await getDocs(usersRef);
+      const responders = usersSnapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter((user) => user.role === "responder");
+
+      // If reporters are found, assign the fullName of the first reporter
+      if (responders.length > 0) {
+        // Fetch all existing emergencies to determine current load
+        const allEmergencies = await ftetchEmergencies();
+
+        // Initialize emergency counts for each reporter
+        const respondersEmergencyCounts: Record<string, number> = {};
+        responders.forEach((responder) => {
+          // Assuming reporter objects have a 'fullname' property used for assignment
+          if (responder.fullName) {
+            respondersEmergencyCounts[responder.fullName] = 0;
+          }
+        });
+
+        // Count emergencies currently assigned to each reporter
+        allEmergencies.forEach((em) => {
+          if (em.assignedTo) {
+            respondersEmergencyCounts[em.assignedTo]++;
+          }
+        });
+        console.warn("Keys:", Object.keys(respondersEmergencyCounts));
+        const responderWithLowEmergencyCount = Object.keys(
+          respondersEmergencyCounts
+        ).reduce(
+          (a, b) =>
+            respondersEmergencyCounts[a] < respondersEmergencyCounts[b] ? a : b,
+          responders[0].fullName
+        );
+        console.warn(
+          "Responder with lowest emergency count:",
+          responderWithLowEmergencyCount
+        );
+
+        emergency.assignedTo =
+          responderWithLowEmergencyCount ?? responders[0].fullname;
+      }
+
+      console.warn("Emergency before creation:", emergency);
       const emergencyId = await createEmergencyRecord(emergency);
 
       return emergencyId;
